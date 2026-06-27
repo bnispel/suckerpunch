@@ -52,6 +52,46 @@ function updateAI() {
     return; // skip normal roaming AND edge-avoidance (which would freeze it over lava)
   }
 
+  // Stuck detection (chasers only): if it's barely making progress and not
+  // actually engaging — e.g. shuffling on a rock right above you — it commits
+  // to walking off the platform toward you for a moment.
+  if (!enemy.ranged) {
+    enemy.sampleT = (enemy.sampleT || 0) + 1;
+    if (enemy.sampleT >= 40) {
+      const moved = Math.abs(enemy.x - (enemy.sampleX != null ? enemy.sampleX : enemy.x));
+      const engaging = dist < 70 && Math.abs(player.y - enemy.y) < 34;
+      enemy.stuckN = (moved < 20 && enemy.onGround && !engaging) ? (enemy.stuckN || 0) + 1 : 0;
+      enemy.sampleX = enemy.x;
+      enemy.sampleT = 0;
+      if (enemy.stuckN >= 2 && !enemy.unstick) {
+        const cp = groundUnder(enemy.x + enemy.w / 2, enemy.y + enemy.h);
+        let dir = Math.sign(dx) || 1;
+        // if you're roughly straight below, head for the nearer edge
+        if (cp && Math.abs(dx) < 30) {
+          dir = (enemy.x - cp.x) < (cp.x + cp.w - (enemy.x + enemy.w)) ? -1 : 1;
+        }
+        enemy.unstick = 50;
+        enemy.unstickDir = dir;
+        enemy.stuckN = 0;
+      }
+    }
+  }
+
+  // Unstick: march decisively to the edge and leave the platform (drop toward
+  // the player, or hop a gap), overriding the normal mirror-the-player logic.
+  if (enemy.unstick > 0) {
+    enemy.unstick--;
+    enemy.facing = enemy.unstickDir;
+    enemy.vx = enemy.unstickDir * enemy.speed;
+    if (enemy.onGround) {
+      const leadX = (enemy.unstickDir > 0 ? enemy.x + enemy.w : enemy.x) + enemy.unstickDir * 8;
+      if (!groundUnder(leadX, enemy.y + enemy.h) && player.y <= enemy.y + 24) {
+        enemy.vy = -JUMP_FORCE;   // edge with no lower target — hop across
+      }
+    }
+    return;
+  }
+
   if (enemy.hurt > 0) {
     // staggered — don't act this frame
   } else if (enemy.ranged) {
