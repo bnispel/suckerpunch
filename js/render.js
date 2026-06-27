@@ -344,6 +344,9 @@ function drawGameOver() {
   ctx.fillStyle = '#fff';
   ctx.font = '18px system-ui, sans-serif';
   ctx.fillText('Press R to play again', W / 2, H / 2 + 42);
+  ctx.fillStyle = '#888';
+  ctx.font = '12px system-ui, sans-serif';
+  ctx.fillText('Games played: ' + playCount, W / 2, H / 2 + 70);
   ctx.textAlign = 'left';
 }
 
@@ -561,6 +564,11 @@ function drawCharSelect() {
   ctx.fillStyle = '#ccc';
   ctx.font = '13px system-ui, sans-serif';
   ctx.fillText('Click a character  •  or press 1 / 2 / 3 / 4 / 5', W / 2, 380);
+
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#888';
+  ctx.font = '12px system-ui, sans-serif';
+  ctx.fillText('Games played: ' + playCount, W - 12, 24);
   ctx.textAlign = 'left';
 }
 

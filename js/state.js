@@ -7,6 +7,14 @@ let controlScheme = 'link';      // see CONTROL_SCHEMES (Link's controls by defa
 let controlsOpen = false;        // is the "Switch Controls" dialog showing?
 let opponentCharKey = null;      // chosen opponent, or null for a random one
 
+// How many matches have been played, persisted across reloads.
+let playCount = 0;
+try { playCount = parseInt(localStorage.getItem('suckerpunch.plays'), 10) || 0; } catch (e) {}
+function bumpPlayCount() {
+  playCount++;
+  try { localStorage.setItem('suckerpunch.plays', String(playCount)); } catch (e) {}
+}
+
 // "Random opponent" button on the opponent-select screen
 const RANDOM_BTN = { x: 310, y: 326, w: 180, h: 30 };
 
@@ -65,6 +73,7 @@ function startGame(diffName) {
   explosions = [];
   winner = null;
   aiTimer = 0;
+  bumpPlayCount();
   gameState = 'playing';
 }
 
