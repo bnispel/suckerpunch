@@ -1,12 +1,16 @@
 // Movement, collisions, lava, and per-frame timers for a fighter.
 function applyPhysics(f) {
   f.inLava = false;
-  // horizontal move + platform walls
+  // horizontal move + platform walls. While launching out of the lava we pass
+  // through platforms, so skip the side-wall check too (otherwise it snaps the
+  // fighter to a platform edge mid-rise, which looks like a teleport).
   f.x += f.vx;
-  for (const p of platforms) {
-    if (rectsOverlap(f, p)) {
-      if (f.vx > 0) f.x = p.x - f.w;
-      else if (f.vx < 0) f.x = p.x + p.w;
+  if (!f.escapingLava) {
+    for (const p of platforms) {
+      if (rectsOverlap(f, p)) {
+        if (f.vx > 0) f.x = p.x - f.w;
+        else if (f.vx < 0) f.x = p.x + p.w;
+      }
     }
   }
   // gravity + vertical move — Cape glides, drifting down slowly thanks to the cape
