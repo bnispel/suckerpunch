@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SuckerPunch</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <h1>SuckerPunch</h1>
+  <canvas id="game" width="800" height="400"></canvas>
+  <div id="hint">← → move &nbsp;•&nbsp; Space jump &nbsp;•&nbsp; F attack &nbsp;•&nbsp; R back to menu</div>
+
+  <!-- Scripts load in dependency order (classic scripts share one global scope,
+       so the game runs by just opening this file — no build step or server). -->
+  <script src="js/config.js"></script>
+  <script src="js/world.js"></script>
+  <script src="js/characters.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/physics.js"></script>
+  <script src="js/combat.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #2a2a3a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, system-ui, sans-serif;
+  color: #fff;
+  overflow: hidden;
+}
+h1 { margin: 8px 0; font-size: 20px; text-shadow: 2px 2px 0 #00000055; }
+canvas {
+  border: 4px solid #1b1b1b;
+  border-radius: 6px;
+  background: #5c94fc;
+  image-rendering: pixelated;
+}
+#hint { margin-top: 8px; font-size: 13px; opacity: 0.85; text-align: center; }

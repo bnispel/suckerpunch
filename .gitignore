@@ -1,0 +1,11 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Reference sketches (the kid's drawings) — keep local, not in the repo
+IMG_*.jpg
+IMG_*.jpeg
+IMG_*.png
