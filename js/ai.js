@@ -43,7 +43,8 @@ function updateAI() {
     const targetX = Math.max(p.x, Math.min(enemy.x + enemy.w / 2, p.x + p.w));
     enemy.facing = targetX >= enemy.x + enemy.w / 2 ? 1 : -1;
     enemy.vx = enemy.facing * enemy.speed;
-    if (enemy.onGround) enemy.vy = -JUMP_FORCE; // normal jump out of the lava
+    // normal jump out of the lava; like the player, it passes up through platforms
+    if (enemy.onGround) { enemy.vy = -JUMP_FORCE; enemy.escapingLava = true; }
     return; // skip normal roaming AND edge-avoidance (which would freeze it over lava)
   }
 
