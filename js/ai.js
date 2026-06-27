@@ -9,7 +9,7 @@ function updatePlayer() {
   if (keys[cs.jump] && player.onGround) {
     player.vy = -JUMP_FORCE; player.onGround = false;
   }
-  if (keys[cs.fight]) {
+  if (cs.fight.some(k => keys[k])) {
     if (player.attack === 'potion') throwPotion(player);
     else if (player.ranged) shootProjectile(player);
     else startAttack(player);

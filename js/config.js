@@ -21,18 +21,20 @@ const SPLASH_W = 70;       // width of the potion splash zone
 const POTION_TICK = 12;    // 1 damage every 12 frames ≈ 5 dmg / second
 const POTION_DAMAGE = 1;
 
-// Selectable control schemes (jump / fight key bindings).
-const CONTROL_KEYS = ['space', 'f'];
+// Selectable control schemes. `fight` is a list of keys (any of them attacks).
+const CONTROL_KEYS = ['link', 'traditional'];
 const CONTROL_SCHEMES = {
-  space: {
-    jump: 'ArrowUp', fight: 'Space',
-    menu: 'Space fights · ↑ jumps',
-    hint: '← → move  •  ↑ jump  •  Space attack  •  R menu',
+  link: {
+    name: "Link's controls",
+    jump: 'Space', fight: ['KeyF', 'ArrowUp'],
+    summary: 'Space jumps, F or Up fights',
+    hint: '← → move  •  Space jump  •  F / ↑ attack  •  R menu',
   },
-  f: {
-    jump: 'Space', fight: 'KeyF',
-    menu: 'F fights · Space jumps',
-    hint: '← → move  •  Space jump  •  F attack  •  R menu',
+  traditional: {
+    name: 'Traditional',
+    jump: 'ArrowUp', fight: ['Space'],
+    summary: 'Up jumps, Space fights',
+    hint: '← → move  •  ↑ jump  •  Space attack  •  R menu',
   },
 };
 

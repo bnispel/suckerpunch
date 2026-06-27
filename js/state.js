@@ -3,12 +3,16 @@ let player, enemy, winner, aiTimer, projectiles, potions;
 let gameState = 'charSelect';   // 'charSelect' | 'difficulty' | 'playing' | 'dying' | 'over'
 let playerCharKey = 'Blue';
 let difficultyName = 'Medium';
-let controlScheme = 'space';     // see CONTROL_SCHEMES
+let controlScheme = 'link';      // see CONTROL_SCHEMES (Link's controls by default)
+let controlsOpen = false;        // is the "Switch Controls" dialog showing?
 
-// two clickable control-scheme buttons on the character-select screen
+// "Switch Controls" button on the character-select screen
+const SWITCH_BTN = { x: 310, y: 322, w: 180, h: 32 };
+// the dialog panel and its two choices
+const DIALOG_PANEL = { x: 210, y: 96, w: 380, h: 212 };
 const CONTROL_OPTIONS = [
-  { id: 'space', x: 228, y: 326, w: 162, h: 28 },
-  { id: 'f',     x: 410, y: 326, w: 162, h: 28 },
+  { id: 'link',        x: 240, y: 168, w: 320, h: 52 },
+  { id: 'traditional', x: 240, y: 232, w: 320, h: 52 },
 ];
 
 function updateHint() {
