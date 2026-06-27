@@ -9,7 +9,7 @@ const CHARACTERS = {
   Green: { name: 'Nameless one',  body: '#3aa83a', visor: '#55555c', tongue: '#1448e0', accent: '#3aa83a', attack: 'triangle' },
   Fire:  { name: 'Ember',         body: '#1a1a1a', visor: '#55555c', tongue: '#ff6a18', accent: '#ff6a18', attack: 'fireball' },
   Cape:  { name: 'Corupted Cape', body: '#5a2db5', visor: '#55555c', tongue: '#8a4cff', accent: '#8a4cff', attack: 'potion', hat: true, cape: true },
-  Storm: { name: 'Storm',         body: '#ffd23a', visor: '#1a3a8a', tongue: '#1f6fff', accent: '#ffd23a', attack: 'melee', storm: true },
+  Storm: { name: 'Storm',         body: '#ffd23a', visor: '#1a3a8a', tongue: '#1f6fff', accent: '#ffd23a', attack: 'melee', storm: true, dmg: 8 },
 };
 
 function makeFighter(x, y, facing, charKey, combat) {
@@ -31,7 +31,8 @@ function makeFighter(x, y, facing, charKey, combat) {
     hitDone: false,      // damage already applied for current lash
     hurt: 0,             // flash timer when taking damage
     speed: combat.speed,
-    damage: combat.damage,
+    // melee damage: a character can override it (e.g. Storm's softer tongue)
+    damage: c.dmg != null ? c.dmg : combat.damage,
     atkCooldown: combat.atkCooldown,
     shootCD: 0,                       // frames until it can shoot/throw again
     shootCooldown: combat.shootCooldown,
