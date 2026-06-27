@@ -239,22 +239,21 @@ function drawCrewmate(f) {
     const attacking = f.attackTimer > 0;
     const ext = attacking ? (ATTACK_REACH * Math.sin((1 - f.attackTimer / ATTACK_ACTIVE) * Math.PI)) : 0;
     if (f.storm) {
-      // a blue lightning-bolt tongue (yellow glow + blue core, zig-zag)
-      const len = 16 + ext;
-      const segs = 5;
-      const zig = (lw, col) => {
-        ctx.strokeStyle = col; ctx.lineWidth = lw;
-        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      // a blue lightning bolt — only visible while attacking, sharp zig-zag,
+      // no glow. Stays hidden when idle.
+      if (attacking) {
+        const len = 20 + ext;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'miter';
         ctx.beginPath();
         ctx.moveTo(11, 30);
-        for (let i = 1; i <= segs; i++) {
-          const t = i / segs;
-          ctx.lineTo(11 + len * t, 30 + (i % 2 ? -5 : 5));
-        }
-        ctx.stroke();
-      };
-      zig(6, '#ffe24a');
-      zig(2.5, '#1f6fff');
+        ctx.lineTo(11 + len * 0.32, 23);
+        ctx.lineTo(11 + len * 0.5, 32);
+        ctx.lineTo(11 + len * 0.74, 25);
+        ctx.lineTo(11 + len, 31);
+        ctx.strokeStyle = '#1f6fff'; ctx.lineWidth = 3; ctx.stroke();
+        ctx.strokeStyle = '#bfe0ff'; ctx.lineWidth = 1; ctx.stroke();
+      }
     } else {
       const lash = Math.sin(frame * 0.15) * 3;
       ctx.strokeStyle = f.tongueColor;
@@ -421,21 +420,20 @@ function drawBolts() {
     ctx.save();
     ctx.globalAlpha = a;
     ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+    ctx.lineJoin = 'miter';
     for (let k = 0; k < 3; k++) {
-      const ox = b.x + (k - 1) * 13;
-      const ht = 48 + (k % 2) * 12;
+      const ox = b.x + (k - 1) * 15;
+      const ht = 52 + (k % 2) * 12;
       const path = () => {
         ctx.beginPath();
         ctx.moveTo(ox, b.y);
-        for (let i = 1; i <= 4; i++) {
-          const t = i / 4;
-          const jx = ox + Math.sin(t * 9 + k * 2 + frame * 0.5) * 7 * (1 - t * 0.25);
-          ctx.lineTo(jx, b.y - ht * t);
-        }
+        ctx.lineTo(ox + 6, b.y - ht * 0.3);
+        ctx.lineTo(ox - 5, b.y - ht * 0.55);
+        ctx.lineTo(ox + 4, b.y - ht * 0.8);
+        ctx.lineTo(ox, b.y - ht);
       };
-      ctx.strokeStyle = '#ffe24a'; ctx.lineWidth = 5; path(); ctx.stroke();  // glow
-      ctx.strokeStyle = '#1f6fff'; ctx.lineWidth = 2; path(); ctx.stroke();  // core
+      ctx.strokeStyle = '#1f6fff'; ctx.lineWidth = 4; path(); ctx.stroke();   // bolt
+      ctx.strokeStyle = '#bfe0ff'; ctx.lineWidth = 1.5; path(); ctx.stroke(); // bright core
     }
     ctx.restore();
   }

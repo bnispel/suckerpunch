@@ -2,12 +2,14 @@
 function update() {
   if (gameState === 'dying') { updateDeath(); return; }
   if (gameState !== 'playing') return;
+  // remember footing before the jump code clears onGround
+  const pGround = player.onGround, eGround = enemy.onGround;
   updatePlayer();
   updateAI();
 
-  // Storm strikes the ground the instant before it leaps off it
-  maybeStormBolt(player);
-  maybeStormBolt(enemy);
+  // Storm strikes the ground it just leapt off of
+  maybeStormBolt(player, pGround);
+  maybeStormBolt(enemy, eGround);
 
   applyPhysics(player);
   applyPhysics(enemy);

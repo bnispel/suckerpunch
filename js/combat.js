@@ -78,10 +78,11 @@ function spawnStormBolt(f) {
   bolts.push({ x: f.x + f.w / 2, y: f.y + f.h, life: STORM_BOLT_LIFE, owner: f });
 }
 
-// Called just before physics: if a Storm fighter is about to leap off solid
-// ground (not the lava), strike lightning from where it stood.
-function maybeStormBolt(f) {
-  if (f.storm && f.onGround && !f.inLava && f.vy < 0) spawnStormBolt(f);
+// Called just after the jump code: if a Storm fighter just leapt off solid
+// ground (was on the ground and is now moving up), strike lightning where it
+// stood. `wasOnGround` is captured before the jump clears onGround.
+function maybeStormBolt(f, wasOnGround) {
+  if (f.storm && wasOnGround && !f.inLava && f.vy < 0) spawnStormBolt(f);
 }
 
 function updateBolts() {
