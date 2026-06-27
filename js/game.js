@@ -17,6 +17,7 @@ function update() {
   resolveAttack(player, enemy);
   resolveAttack(enemy, player);
   updateProjectiles();
+  updateExplosions();
   updatePotions();
   updateBolts();
 

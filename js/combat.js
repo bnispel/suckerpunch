@@ -59,7 +59,25 @@ function updateProjectiles() {
     }
     if (pr.x < -20 || pr.x > W + 20) pr.dead = true;
   }
+
+  // opposing shots that meet in the air cancel out in a little explosion
+  for (let i = 0; i < projectiles.length; i++) {
+    for (let j = i + 1; j < projectiles.length; j++) {
+      const a = projectiles[i], b = projectiles[j];
+      if (a.dead || b.dead || a.owner === b.owner) continue;
+      if (Math.hypot(a.x - b.x, a.y - b.y) < a.size + b.size) {
+        a.dead = true; b.dead = true;
+        explosions.push({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, life: EXPLOSION_LIFE });
+      }
+    }
+  }
+
   projectiles = projectiles.filter(pr => !pr.dead);
+}
+
+function updateExplosions() {
+  for (const ex of explosions) ex.life--;
+  explosions = explosions.filter(ex => ex.life > 0);
 }
 
 // Corupted Cape's potion: thrown to the ground, leaves a damaging purple splash.

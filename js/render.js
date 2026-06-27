@@ -439,6 +439,23 @@ function drawBolts() {
   }
 }
 
+// Little burst where two opposing projectiles collided.
+function drawExplosions() {
+  for (const ex of explosions) {
+    const k = 1 - ex.life / EXPLOSION_LIFE;   // 0 -> 1 over its life
+    const r = 4 + k * 16;
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, ex.life / EXPLOSION_LIFE);
+    ctx.strokeStyle = '#ffd24a'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(ex.x, ex.y, r, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = '#ff7a18';
+    ctx.beginPath(); ctx.arc(ex.x, ex.y, Math.max(0, r * 0.5), 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fff3b0';
+    ctx.beginPath(); ctx.arc(ex.x, ex.y, Math.max(0, r * 0.22), 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+}
+
 function draw() {
   drawBackground();
 
@@ -454,6 +471,7 @@ function draw() {
   drawPotions();
   drawBolts();
   drawProjectiles();
+  drawExplosions();
   if (enemy !== sinker) drawCrewmate(enemy);
   if (player !== sinker) drawCrewmate(player);
   drawHealthBars();

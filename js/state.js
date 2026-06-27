@@ -1,5 +1,5 @@
 // Match state, menus, and the routines that start a game.
-let player, enemy, winner, aiTimer, projectiles, potions, bolts;
+let player, enemy, winner, aiTimer, projectiles, potions, bolts, explosions;
 let gameState = 'charSelect';   // 'charSelect' | 'difficulty' | 'playing' | 'dying' | 'over'
 let playerCharKey = 'Blue';
 let difficultyName = 'Medium';
@@ -54,6 +54,7 @@ function startGame(diffName) {
   projectiles = [];
   potions = [];
   bolts = [];
+  explosions = [];
   winner = null;
   aiTimer = 0;
   gameState = 'playing';
@@ -65,4 +66,5 @@ enemy  = makeFighter(660, 300 - 48, -1, 'Green', DIFFICULTIES.Medium);
 projectiles = [];
 potions = [];
 bolts = [];
+explosions = [];
 updateHint();   // show the default scheme's controls under the canvas

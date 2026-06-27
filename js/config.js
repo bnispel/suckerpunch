@@ -24,6 +24,8 @@ const POTION_DAMAGE = 1;
 const STORM_BOLT_LIFE = 26;   // frames a ground lightning strike lasts
 const STORM_BOLT_DAMAGE = 8;  // damage if caught in Storm's ground strike
 
+const EXPLOSION_LIFE = 18;    // frames a projectile-collision burst lasts
+
 // Selectable control schemes. `fight` is a list of keys (any of them attacks).
 const CONTROL_KEYS = ['link', 'traditional'];
 const CONTROL_SCHEMES = {
