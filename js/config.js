@@ -26,9 +26,9 @@ const CONTROL_KEYS = ['link', 'traditional'];
 const CONTROL_SCHEMES = {
   link: {
     name: "Link's controls",
-    jump: 'Space', fight: ['KeyF', 'ArrowUp'],
-    summary: 'Space jumps, F or Up fights',
-    hint: '← → move  •  Space jump  •  F / ↑ attack  •  R menu',
+    jump: 'Space', fight: ['KeyF', 'ArrowDown'],
+    summary: 'Space jumps, F or Down fights',
+    hint: '← → move  •  Space jump  •  F / ↓ attack  •  R menu',
   },
   traditional: {
     name: 'Traditional',

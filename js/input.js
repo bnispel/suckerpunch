@@ -2,7 +2,7 @@
 const keys = {};
 
 window.addEventListener('keydown', e => {
-  if (['ArrowLeft', 'ArrowRight', 'ArrowUp', ' ', 'Space'].includes(e.key) || e.code === 'Space') {
+  if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' ', 'Space'].includes(e.key) || e.code === 'Space') {
     e.preventDefault();
   }
   keys[e.code] = true;
