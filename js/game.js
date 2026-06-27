@@ -5,6 +5,10 @@ function update() {
   updatePlayer();
   updateAI();
 
+  // Storm strikes the ground the instant before it leaps off it
+  maybeStormBolt(player);
+  maybeStormBolt(enemy);
+
   applyPhysics(player);
   applyPhysics(enemy);
 
@@ -12,6 +16,7 @@ function update() {
   resolveAttack(enemy, player);
   updateProjectiles();
   updatePotions();
+  updateBolts();
 
   updateLavaDamage(player);
   updateLavaDamage(enemy);

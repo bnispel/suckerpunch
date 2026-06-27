@@ -73,6 +73,36 @@ function throwPotion(f) {
   });
 }
 
+// Storm: when he jumps off the ground, lightning erupts from the spot he left.
+function spawnStormBolt(f) {
+  bolts.push({ x: f.x + f.w / 2, y: f.y + f.h, life: STORM_BOLT_LIFE, owner: f });
+}
+
+// Called just before physics: if a Storm fighter is about to leap off solid
+// ground (not the lava), strike lightning from where it stood.
+function maybeStormBolt(f) {
+  if (f.storm && f.onGround && !f.inLava && f.vy < 0) spawnStormBolt(f);
+}
+
+function updateBolts() {
+  for (const b of bolts) {
+    b.life--;
+    // zap the opponent if they're standing in the strike during its first frames
+    if (!b.hitDone && b.life > STORM_BOLT_LIFE - 14) {
+      const target = b.owner === enemy ? player : enemy;
+      const zone = { x: b.x - 22, y: b.y - 54, w: 44, h: 58 };
+      if (rectsOverlap(zone, target)) {
+        target.hp = Math.max(0, target.hp - STORM_BOLT_DAMAGE);
+        target.hurt = 10;
+        target.vy = -4;
+        b.hitDone = true;
+      }
+    }
+    if (b.life <= 0) b.dead = true;
+  }
+  bolts = bolts.filter(b => !b.dead);
+}
+
 function updatePotions() {
   for (const po of potions) {
     if (po.state === 'flying') {

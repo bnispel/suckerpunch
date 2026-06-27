@@ -21,6 +21,9 @@ const SPLASH_W = 70;       // width of the potion splash zone
 const POTION_TICK = 12;    // 1 damage every 12 frames ≈ 5 dmg / second
 const POTION_DAMAGE = 1;
 
+const STORM_BOLT_LIFE = 26;   // frames a ground lightning strike lasts
+const STORM_BOLT_DAMAGE = 8;  // damage if caught in Storm's ground strike
+
 // Selectable control schemes. `fight` is a list of keys (any of them attacks).
 const CONTROL_KEYS = ['link', 'traditional'];
 const CONTROL_SCHEMES = {

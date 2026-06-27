@@ -3,12 +3,13 @@
 //  Nameless one  — green body, gray lens, shoots spinning triangles
 //  Ember         — black body, fire on the head, shoots fireballs
 //  Corupted Cape — purple body, witch hat + red cape, throws damaging potions
-const CHAR_KEYS = ['Blue', 'Green', 'Fire', 'Cape'];
+const CHAR_KEYS = ['Blue', 'Green', 'Fire', 'Cape', 'Storm'];
 const CHARACTERS = {
   Blue:  { name: 'Blue',          body: '#55555c', visor: '#1a3a8a', tongue: '#1448e0', accent: '#3a6ff0', attack: 'melee' },
   Green: { name: 'Nameless one',  body: '#3aa83a', visor: '#55555c', tongue: '#1448e0', accent: '#3aa83a', attack: 'triangle' },
   Fire:  { name: 'Ember',         body: '#1a1a1a', visor: '#55555c', tongue: '#ff6a18', accent: '#ff6a18', attack: 'fireball' },
   Cape:  { name: 'Corupted Cape', body: '#5a2db5', visor: '#55555c', tongue: '#8a4cff', accent: '#8a4cff', attack: 'potion', hat: true, cape: true },
+  Storm: { name: 'Storm',         body: '#ffd23a', visor: '#1a3a8a', tongue: '#1f6fff', accent: '#ffd23a', attack: 'melee', storm: true },
 };
 
 function makeFighter(x, y, facing, charKey, combat) {
@@ -23,6 +24,7 @@ function makeFighter(x, y, facing, charKey, combat) {
     ranged: c.attack === 'triangle' || c.attack === 'fireball',
     hat: c.hat || false,              // witch hat (Corupted Cape)
     cape: c.cape || false,            // red cape (Corupted Cape)
+    storm: c.storm || false,          // lightning tongue + ground strike on jump (Storm)
     hp: 100, maxHp: 100,
     attackTimer: 0,      // >0 while a lash animation is active
     cooldown: 0,         // frames until next melee attack allowed

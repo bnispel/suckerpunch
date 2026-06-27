@@ -18,7 +18,8 @@ window.addEventListener('keydown', e => {
   const num = (e.code === 'Digit1' || e.code === 'Numpad1') ? 0
             : (e.code === 'Digit2' || e.code === 'Numpad2') ? 1
             : (e.code === 'Digit3' || e.code === 'Numpad3') ? 2
-            : (e.code === 'Digit4' || e.code === 'Numpad4') ? 3 : -1;
+            : (e.code === 'Digit4' || e.code === 'Numpad4') ? 3
+            : (e.code === 'Digit5' || e.code === 'Numpad5') ? 4 : -1;
   if (gameState === 'charSelect') {
     if (e.code === 'KeyC') controlsOpen = true;
     else if (num >= 0) selectChar(CHAR_KEYS[num]);

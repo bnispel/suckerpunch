@@ -238,15 +238,34 @@ function drawCrewmate(f) {
 
     const attacking = f.attackTimer > 0;
     const ext = attacking ? (ATTACK_REACH * Math.sin((1 - f.attackTimer / ATTACK_ACTIVE) * Math.PI)) : 0;
-    const lash = Math.sin(frame * 0.15) * 3;
-    ctx.strokeStyle = f.tongueColor;
-    ctx.lineWidth = 5;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(11, 30);
-    ctx.quadraticCurveTo(22 + ext * 0.6, 22 + lash, 18 + ext, 30);
-    if (!attacking) ctx.quadraticCurveTo(30, 38 - lash, 25, 26); // little curl when idle
-    ctx.stroke();
+    if (f.storm) {
+      // a blue lightning-bolt tongue (yellow glow + blue core, zig-zag)
+      const len = 16 + ext;
+      const segs = 5;
+      const zig = (lw, col) => {
+        ctx.strokeStyle = col; ctx.lineWidth = lw;
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(11, 30);
+        for (let i = 1; i <= segs; i++) {
+          const t = i / segs;
+          ctx.lineTo(11 + len * t, 30 + (i % 2 ? -5 : 5));
+        }
+        ctx.stroke();
+      };
+      zig(6, '#ffe24a');
+      zig(2.5, '#1f6fff');
+    } else {
+      const lash = Math.sin(frame * 0.15) * 3;
+      ctx.strokeStyle = f.tongueColor;
+      ctx.lineWidth = 5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(11, 30);
+      ctx.quadraticCurveTo(22 + ext * 0.6, 22 + lash, 18 + ext, 30);
+      if (!attacking) ctx.quadraticCurveTo(30, 38 - lash, 25, 26); // little curl when idle
+      ctx.stroke();
+    }
   }
 
   ctx.restore();
@@ -395,6 +414,33 @@ function drawPotions() {
   }
 }
 
+// Storm's ground lightning strikes rising from where he jumped.
+function drawBolts() {
+  for (const b of bolts) {
+    const a = Math.max(0, b.life / STORM_BOLT_LIFE);
+    ctx.save();
+    ctx.globalAlpha = a;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    for (let k = 0; k < 3; k++) {
+      const ox = b.x + (k - 1) * 13;
+      const ht = 48 + (k % 2) * 12;
+      const path = () => {
+        ctx.beginPath();
+        ctx.moveTo(ox, b.y);
+        for (let i = 1; i <= 4; i++) {
+          const t = i / 4;
+          const jx = ox + Math.sin(t * 9 + k * 2 + frame * 0.5) * 7 * (1 - t * 0.25);
+          ctx.lineTo(jx, b.y - ht * t);
+        }
+      };
+      ctx.strokeStyle = '#ffe24a'; ctx.lineWidth = 5; path(); ctx.stroke();  // glow
+      ctx.strokeStyle = '#1f6fff'; ctx.lineWidth = 2; path(); ctx.stroke();  // core
+    }
+    ctx.restore();
+  }
+}
+
 function draw() {
   drawBackground();
 
@@ -408,6 +454,7 @@ function draw() {
   drawLava();
   for (const p of platforms) drawPlatform(p);
   drawPotions();
+  drawBolts();
   drawProjectiles();
   if (enemy !== sinker) drawCrewmate(enemy);
   if (player !== sinker) drawCrewmate(player);
@@ -462,7 +509,7 @@ function drawCharSelect() {
 
   ctx.fillStyle = '#ccc';
   ctx.font = '13px system-ui, sans-serif';
-  ctx.fillText('Click a character  •  or press 1 / 2 / 3 / 4', W / 2, 380);
+  ctx.fillText('Click a character  •  or press 1 / 2 / 3 / 4 / 5', W / 2, 380);
   ctx.textAlign = 'left';
 }
 
