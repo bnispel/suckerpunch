@@ -5,10 +5,11 @@ function updatePlayer() {
   else if (keys['ArrowRight']) { player.vx = player.speed; player.facing = 1; }
   else player.vx = 0;
 
-  if (keys['ArrowUp'] && player.onGround) {
+  const cs = CONTROL_SCHEMES[controlScheme];
+  if (keys[cs.jump] && player.onGround) {
     player.vy = -JUMP_FORCE; player.onGround = false;
   }
-  if (keys['Space']) {
+  if (keys[cs.fight]) {
     if (player.attack === 'potion') throwPotion(player);
     else if (player.ranged) shootProjectile(player);
     else startAttack(player);

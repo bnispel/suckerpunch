@@ -21,6 +21,21 @@ const SPLASH_W = 70;       // width of the potion splash zone
 const POTION_TICK = 12;    // 1 damage every 12 frames ≈ 5 dmg / second
 const POTION_DAMAGE = 1;
 
+// Selectable control schemes (jump / fight key bindings).
+const CONTROL_KEYS = ['space', 'f'];
+const CONTROL_SCHEMES = {
+  space: {
+    jump: 'ArrowUp', fight: 'Space',
+    menu: 'Space fights · ↑ jumps',
+    hint: '← → move  •  ↑ jump  •  Space attack  •  R menu',
+  },
+  f: {
+    jump: 'Space', fight: 'KeyF',
+    menu: 'F fights · Space jumps',
+    hint: '← → move  •  Space jump  •  F attack  •  R menu',
+  },
+};
+
 // ---- shared helpers ----
 function rectsOverlap(a, b) {
   return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;

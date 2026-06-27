@@ -407,9 +407,25 @@ function drawCharSelect() {
     ctx.fillText(ATTACK_LABEL[c.attack], opt.x + opt.w / 2, opt.y + opt.h - 14);
   }
 
+  // control-scheme picker
   ctx.fillStyle = '#ccc';
-  ctx.font = '14px system-ui, sans-serif';
-  ctx.fillText('Click a character  •  or press 1 / 2 / 3 / 4', W / 2, 360);
+  ctx.font = '12px system-ui, sans-serif';
+  ctx.fillText('Controls  (click or press C)', W / 2, 318);
+  for (const opt of CONTROL_OPTIONS) {
+    const sel = controlScheme === opt.id;
+    ctx.fillStyle = sel ? '#3a6ff0' : 'rgba(255,255,255,0.08)';
+    roundRect(opt.x, opt.y, opt.w, opt.h, 8); ctx.fill();
+    ctx.strokeStyle = sel ? '#cfe0ff' : '#ffffff55';
+    ctx.lineWidth = sel ? 2 : 1;
+    roundRect(opt.x, opt.y, opt.w, opt.h, 8); ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = (sel ? 'bold ' : '') + '12px system-ui, sans-serif';
+    ctx.fillText(CONTROL_SCHEMES[opt.id].menu, opt.x + opt.w / 2, opt.y + 18);
+  }
+
+  ctx.fillStyle = '#ccc';
+  ctx.font = '13px system-ui, sans-serif';
+  ctx.fillText('Click a character  •  or press 1 / 2 / 3 / 4', W / 2, 378);
   ctx.textAlign = 'left';
 }
 
