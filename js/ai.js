@@ -7,8 +7,9 @@ function updatePlayer() {
 
   const cs = CONTROL_SCHEMES[controlScheme];
   if (keys[cs.jump] && (player.onGround || player.inLava)) {
-    // a stronger launch out of the lava so you can clear a platform above
+    // a stronger launch out of the lava, passing up through any platform above
     player.vy = -JUMP_FORCE * (player.inLava ? 1.4 : 1);
+    if (player.inLava) player.escapingLava = true;
     player.onGround = false;
   }
   if (cs.fight.some(k => keys[k])) {
@@ -42,7 +43,7 @@ function updateAI() {
     const targetX = Math.max(p.x, Math.min(enemy.x + enemy.w / 2, p.x + p.w));
     enemy.facing = targetX >= enemy.x + enemy.w / 2 ? 1 : -1;
     enemy.vx = enemy.facing * enemy.speed;
-    if (enemy.onGround) enemy.vy = -JUMP_FORCE * 1.4; // strong launch out of the lava
+    if (enemy.onGround) { enemy.vy = -JUMP_FORCE * 1.4; enemy.escapingLava = true; } // launch up through platforms
     return; // skip normal roaming AND edge-avoidance (which would freeze it over lava)
   }
 

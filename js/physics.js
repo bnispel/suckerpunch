@@ -17,8 +17,9 @@ function applyPhysics(f) {
   f.onGround = false;
   for (const p of platforms) {
     if (rectsOverlap(f, p)) {
-      if (f.vy > 0) { f.y = p.y - f.h; f.vy = 0; f.onGround = true; }
-      else if (f.vy < 0) { f.y = p.y + p.h; f.vy = 0; }
+      if (f.vy > 0) { f.y = p.y - f.h; f.vy = 0; f.onGround = true; f.escapingLava = false; }
+      // launching out of lava passes up through platforms instead of bonking
+      else if (f.vy < 0 && !f.escapingLava) { f.y = p.y + p.h; f.vy = 0; }
     }
   }
   // arena side walls
@@ -31,6 +32,7 @@ function applyPhysics(f) {
     f.vy = 0;
     f.onGround = true;
     f.inLava = true;
+    f.escapingLava = false;
   }
 }
 

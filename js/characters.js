@@ -36,6 +36,7 @@ function makeFighter(x, y, facing, charKey, combat) {
     projSpeed: combat.projSpeed,
     projDamage: combat.projDamage,
     inLava: false,                    // touching the lava this frame
+    escapingLava: false,              // rising out of lava — pass up through platforms
     sinking: false,                   // playing the death-by-lava sink
     lavaTick: 0,                      // counts frames of lava contact
     moveDir: 0,                       // AI's current independent move intent
