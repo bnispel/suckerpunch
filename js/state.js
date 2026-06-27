@@ -18,6 +18,17 @@ function bumpPlayCount() {
 // "Random opponent" button on the opponent-select screen
 const RANDOM_BTN = { x: 310, y: 326, w: 180, h: 30 };
 
+// Touch controls (shown only once a touch is detected). Each held button sets a
+// flag the player update reads alongside the keyboard.
+let usingTouch = false;
+const touch = { left: false, right: false, jump: false, attack: false };
+const TOUCH_BTNS = {
+  left:   { x: 58,  y: 342, r: 33, label: '◀' },
+  right:  { x: 142, y: 342, r: 33, label: '▶' },
+  attack: { x: 648, y: 300, r: 33, label: 'HIT' },
+  jump:   { x: 742, y: 344, r: 39, label: 'JUMP' },
+};
+
 // "Switch Controls" button on the character-select screen
 const SWITCH_BTN = { x: 310, y: 322, w: 180, h: 32 };
 // the dialog panel and its two choices

@@ -459,6 +459,27 @@ function drawExplosions() {
   }
 }
 
+// On-screen touch buttons (translucent so the action stays visible behind).
+function drawTouchControls() {
+  ctx.save();
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (const name in TOUCH_BTNS) {
+    const b = TOUCH_BTNS[name];
+    const pressed = touch[name];
+    ctx.globalAlpha = pressed ? 0.6 : 0.34;
+    ctx.fillStyle = name === 'attack' ? '#e0392b' : name === 'jump' ? '#3a6ff0' : '#ffffff';
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 0.85;
+    ctx.lineWidth = 2; ctx.strokeStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold ' + (b.label.length > 2 ? 14 : 22) + 'px system-ui, sans-serif';
+    ctx.fillText(b.label, b.x, b.y + 1);
+  }
+  ctx.restore();
+}
+
 function draw() {
   drawBackground();
 
@@ -478,6 +499,7 @@ function draw() {
   if (enemy !== sinker) drawCrewmate(enemy);
   if (player !== sinker) drawCrewmate(player);
   drawHealthBars();
+  if (usingTouch && gameState === 'playing') drawTouchControls();
   if (gameState === 'charSelect') drawCharSelect();
   else if (gameState === 'opponentSelect') drawOpponentSelect();
   else if (gameState === 'difficulty') drawDifficulty();

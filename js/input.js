@@ -61,3 +61,49 @@ canvas.addEventListener('click', e => {
     for (const opt of DIFF_OPTIONS) if (hitBox(opt, mx, my)) startGame(opt.name);
   }
 });
+
+// ---- Touch controls (auto-detected) ----
+// During a match, touching an on-screen button holds that action. On the menus
+// we let the tap become a normal click so selection still works.
+const activeTouches = {};   // touch id -> button name
+
+function canvasPoint(t) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (t.clientX - rect.left) * (W / rect.width),
+    y: (t.clientY - rect.top) * (H / rect.height),
+  };
+}
+function touchButtonAt(x, y) {
+  for (const name in TOUCH_BTNS) {
+    const b = TOUCH_BTNS[name];
+    if ((x - b.x) ** 2 + (y - b.y) ** 2 <= b.r * b.r) return name;
+  }
+  return null;
+}
+function releaseTouch(e) {
+  for (const t of e.changedTouches) {
+    const b = activeTouches[t.identifier];
+    if (b) { touch[b] = false; delete activeTouches[t.identifier]; }
+  }
+}
+
+canvas.addEventListener('touchstart', e => {
+  usingTouch = true;   // reveal the on-screen controls from now on
+  if (gameState === 'playing') {
+    let handled = false;
+    for (const t of e.changedTouches) {
+      const p = canvasPoint(t);
+      const b = touchButtonAt(p.x, p.y);
+      if (b) { activeTouches[t.identifier] = b; touch[b] = true; handled = true; }
+    }
+    if (handled) e.preventDefault();   // only swallow taps that hit a button
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchmove', e => {
+  if (Object.keys(activeTouches).length) e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener('touchend', releaseTouch, { passive: false });
+canvas.addEventListener('touchcancel', releaseTouch, { passive: false });

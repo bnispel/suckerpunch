@@ -1,18 +1,22 @@
 // Player controls and the computer opponent's behavior.
 
 function updatePlayer() {
-  if (keys['ArrowLeft'])  { player.vx = -player.speed; player.facing = -1; }
-  else if (keys['ArrowRight']) { player.vx = player.speed; player.facing = 1; }
+  const cs = CONTROL_SCHEMES[controlScheme];
+  const goLeft  = keys['ArrowLeft']  || touch.left;
+  const goRight = keys['ArrowRight'] || touch.right;
+  if (goLeft && !goRight)      { player.vx = -player.speed; player.facing = -1; }
+  else if (goRight && !goLeft) { player.vx = player.speed;  player.facing = 1; }
   else player.vx = 0;
 
-  const cs = CONTROL_SCHEMES[controlScheme];
-  if (keys[cs.jump] && (player.onGround || player.inLava)) {
+  const jumpHeld = keys[cs.jump] || touch.jump;
+  if (jumpHeld && (player.onGround || player.inLava)) {
     // normal jump; from the lava it passes up through any platform above
     player.vy = -JUMP_FORCE;
     if (player.inLava) player.escapingLava = true;
     player.onGround = false;
   }
-  if (cs.fight.some(k => keys[k])) {
+  const fightHeld = cs.fight.some(k => keys[k]) || touch.attack;
+  if (fightHeld) {
     if (player.attack === 'potion') throwPotion(player);
     else if (player.ranged) shootProjectile(player);
     else startAttack(player);
