@@ -77,14 +77,38 @@ function updateAI() {
     }
   }
 
-  // Platform edge handling: ranged fighters stop (stay on their rock);
-  // a chaser hops the gap to keep coming after you.
+  // Platform edge handling. Ranged fighters just stop and hold their rock.
+  // A chaser at a ledge decides what to do instead of hopping in place
+  // (which used to make it jitter forever on a rock above the player):
+  //   • player is below  -> walk off the edge and drop down toward them
+  //   • a rock is in reach -> hop the gap to keep chasing
+  //   • otherwise          -> stop at the edge (don't jitter)
   if (enemy.onGround && enemy.vx !== 0) {
     const dir = Math.sign(enemy.vx);
     const leadX = (dir > 0 ? enemy.x + enemy.w : enemy.x) + dir * 8;
     if (!groundUnder(leadX, enemy.y + enemy.h)) {
-      if (enemy.ranged) enemy.vx = 0;
-      else enemy.vy = -JUMP_FORCE;
+      if (enemy.ranged) {
+        enemy.vx = 0;
+      } else if (player.y > enemy.y + 24) {
+        // player is on a lower platform: keep walking so it falls off and down
+      } else if (platformAhead(enemy, dir)) {
+        enemy.vy = -JUMP_FORCE;   // a reachable rock ahead — hop the gap
+      } else {
+        enemy.vx = 0;             // nowhere to land — stop rather than jitter
+      }
     }
   }
+}
+
+// Is there a platform a chaser could jump to just ahead in direction dir
+// (near edge within horizontal reach, top at a height a jump can clear)?
+function platformAhead(f, dir) {
+  const footY = f.y + f.h;
+  const fromX = dir > 0 ? f.x + f.w : f.x;
+  for (const p of platforms) {
+    const nearEdge = dir > 0 ? p.x : p.x + p.w;
+    const ahead = (nearEdge - fromX) * dir;          // distance in front of the foot
+    if (ahead > 4 && ahead < 130 && p.y <= footY + 4 && p.y >= footY - 120) return true;
+  }
+  return false;
 }
