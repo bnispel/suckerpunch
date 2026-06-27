@@ -63,6 +63,21 @@ canvas.addEventListener('click', e => {
 });
 
 // ---- Touch controls (auto-detected) ----
+// Track portrait vs landscape so the renderer knows whether to draw the
+// on-canvas overlay buttons (landscape) or defer to the DOM bar (portrait).
+let portrait = window.innerHeight >= window.innerWidth;
+window.addEventListener('resize', () => { portrait = window.innerHeight >= window.innerWidth; });
+
+// Wire the portrait control-bar buttons to the same `touch` flags.
+document.querySelectorAll('#touch-bar .tbtn').forEach(btn => {
+  const act = btn.dataset.act;
+  const press = e => { e.preventDefault(); usingTouch = true; touch[act] = true; btn.classList.add('pressed'); };
+  const release = e => { e.preventDefault(); touch[act] = false; btn.classList.remove('pressed'); };
+  btn.addEventListener('pointerdown', press);
+  btn.addEventListener('pointerup', release);
+  btn.addEventListener('pointercancel', release);
+  btn.addEventListener('pointerleave', release);
+});
 // During a match, touching an on-screen button holds that action. On the menus
 // we let the tap become a normal click so selection still works.
 const activeTouches = {};   // touch id -> button name
@@ -90,6 +105,7 @@ function releaseTouch(e) {
 
 canvas.addEventListener('touchstart', e => {
   usingTouch = true;   // reveal the on-screen controls from now on
+  document.body.classList.add('touch');
 
   // top buttons (Menu / Restart) during or after a match
   if (gameState === 'playing' || gameState === 'dying' || gameState === 'over') {
@@ -100,7 +116,9 @@ canvas.addEventListener('touchstart', e => {
     }
   }
 
-  if (gameState === 'playing') {
+  // In portrait the DOM control bar handles movement/attack, so ignore
+  // on-canvas control taps there.
+  if (gameState === 'playing' && !portrait) {
     let handled = false;
     for (const t of e.changedTouches) {
       const p = canvasPoint(t);

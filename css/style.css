@@ -28,3 +28,38 @@ canvas {
   touch-action: none;
 }
 #hint { margin-top: 8px; font-size: 13px; opacity: 0.85; text-align: center; }
+
+/* Portrait touch control bar (hidden by default; shown only on touch devices
+   held in portrait while a match is on — see the rules below). */
+#touch-bar {
+  display: none;
+  width: min(96vw, calc(80vh * 2), 1000px);
+  margin-top: 12px;
+  justify-content: space-between;
+  align-items: center;
+  touch-action: none;
+}
+#touch-bar .pad { display: flex; gap: 14px; }
+.tbtn {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid #ffffffaa;
+  background: #ffffff22;
+  color: #fff;
+  font: bold 18px system-ui, sans-serif;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+.tbtn.jump { width: 82px; height: 82px; background: #3a6ff03a; }
+.tbtn.hit  { background: #e0392b3a; }
+.tbtn.pressed { background: #ffffff66; }
+
+/* Show the bar only on touch devices, in portrait, during a match. */
+body.touch.playing #touch-bar { display: flex; }
+@media (orientation: landscape) {
+  body.touch.playing #touch-bar { display: none; }
+}

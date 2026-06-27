@@ -520,7 +520,8 @@ function draw() {
   if (enemy !== sinker) drawCrewmate(enemy);
   if (player !== sinker) drawCrewmate(player);
   drawHealthBars();
-  if (usingTouch && gameState === 'playing') drawTouchControls();
+  // landscape uses on-canvas overlay buttons; portrait uses the DOM bar below
+  if (usingTouch && gameState === 'playing' && !portrait) drawTouchControls();
   if (gameState === 'charSelect') drawCharSelect();
   else if (gameState === 'opponentSelect') drawOpponentSelect();
   else if (gameState === 'difficulty') drawDifficulty();
@@ -531,7 +532,15 @@ function draw() {
   if (usingTouch && (gameState === 'playing' || gameState === 'dying' || gameState === 'over')) {
     drawTouchUI();
   }
+
+  // show the portrait DOM control bar only while a match is on
+  const barOn = usingTouch && (gameState === 'playing' || gameState === 'dying');
+  if (barOn !== _barShown) {
+    document.body.classList.toggle('playing', barOn);
+    _barShown = barOn;
+  }
 }
+let _barShown = false;
 
 // Small badge showing the player's chosen character (top-left of later menus).
 function drawChosenBadge() {

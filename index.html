@@ -11,6 +11,19 @@
   <canvas id="game" width="800" height="400"></canvas>
   <div id="hint">← → move &nbsp;•&nbsp; Space jump &nbsp;•&nbsp; F / ↓ attack &nbsp;•&nbsp; R menu</div>
 
+  <!-- Portrait touch controls: a button bar shown below the game on touch
+       devices held upright (landscape uses the on-canvas overlay buttons). -->
+  <div id="touch-bar">
+    <div class="pad">
+      <button class="tbtn" data-act="left">◀</button>
+      <button class="tbtn" data-act="right">▶</button>
+    </div>
+    <div class="pad">
+      <button class="tbtn hit" data-act="attack">HIT</button>
+      <button class="tbtn jump" data-act="jump">JUMP</button>
+    </div>
+  </div>
+
   <!-- Vercel Web Analytics (static-site integration; enable it in the Vercel
        dashboard under the project's Analytics tab). -->
   <script defer src="/_vercel/insights/script.js"></script>
