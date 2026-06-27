@@ -476,9 +476,29 @@ function draw() {
   if (player !== sinker) drawCrewmate(player);
   drawHealthBars();
   if (gameState === 'charSelect') drawCharSelect();
+  else if (gameState === 'opponentSelect') drawOpponentSelect();
   else if (gameState === 'difficulty') drawDifficulty();
   else if (gameState === 'over') drawGameOver();
   if (controlsOpen) drawControlsDialog();
+}
+
+// One character card (caller sets textAlign = center).
+function drawCharCard(opt) {
+  const c = CHARACTERS[opt.key];
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  roundRect(opt.x, opt.y, opt.w, opt.h, 12); ctx.fill();
+  ctx.strokeStyle = c.accent;
+  ctx.lineWidth = 3;
+  roundRect(opt.x, opt.y, opt.w, opt.h, 12); ctx.stroke();
+
+  drawCrewmate(previews[opt.key]);
+
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 16px system-ui, sans-serif';
+  ctx.fillText(c.name, opt.x + opt.w / 2, opt.y + opt.h - 34);
+  ctx.fillStyle = '#bbb';
+  ctx.font = '12px system-ui, sans-serif';
+  ctx.fillText(c.power || ATTACK_LABEL[c.attack], opt.x + opt.w / 2, opt.y + opt.h - 14);
 }
 
 function drawCharSelect() {
@@ -490,25 +510,9 @@ function drawCharSelect() {
   ctx.fillText('SuckerPunch', W / 2, 85);
   ctx.fillStyle = '#ffd24a';
   ctx.font = '18px system-ui, sans-serif';
-  ctx.fillText('Choose your character', W / 2, 125);
+  ctx.fillText('Choose your player', W / 2, 125);
 
-  for (let i = 0; i < CHAR_OPTIONS.length; i++) {
-    const opt = CHAR_OPTIONS[i], c = CHARACTERS[opt.key];
-    ctx.fillStyle = 'rgba(255,255,255,0.08)';
-    roundRect(opt.x, opt.y, opt.w, opt.h, 12); ctx.fill();
-    ctx.strokeStyle = c.accent;
-    ctx.lineWidth = 3;
-    roundRect(opt.x, opt.y, opt.w, opt.h, 12); ctx.stroke();
-
-    drawCrewmate(previews[opt.key]);
-
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 16px system-ui, sans-serif';
-    ctx.fillText(c.name, opt.x + opt.w / 2, opt.y + opt.h - 34);
-    ctx.fillStyle = '#bbb';
-    ctx.font = '12px system-ui, sans-serif';
-    ctx.fillText(ATTACK_LABEL[c.attack], opt.x + opt.w / 2, opt.y + opt.h - 14);
-  }
+  for (const opt of CHAR_OPTIONS) drawCharCard(opt);
 
   // current scheme + "Switch Controls" button
   ctx.fillStyle = '#aaa';
@@ -526,6 +530,35 @@ function drawCharSelect() {
   ctx.fillStyle = '#ccc';
   ctx.font = '13px system-ui, sans-serif';
   ctx.fillText('Click a character  •  or press 1 / 2 / 3 / 4 / 5', W / 2, 380);
+  ctx.textAlign = 'left';
+}
+
+function drawOpponentSelect() {
+  ctx.fillStyle = 'rgba(0,0,0,0.72)';
+  ctx.fillRect(0, 0, W, H);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 30px system-ui, sans-serif';
+  ctx.fillText('Choose your opponent', W / 2, 88);
+  ctx.fillStyle = '#ffd24a';
+  ctx.font = '15px system-ui, sans-serif';
+  ctx.fillText('Playing as ' + CHARACTERS[playerCharKey].name, W / 2, 120);
+
+  for (const opt of CHAR_OPTIONS) drawCharCard(opt);
+
+  // Random opponent button
+  ctx.fillStyle = '#2e7d46';
+  roundRect(RANDOM_BTN.x, RANDOM_BTN.y, RANDOM_BTN.w, RANDOM_BTN.h, 8); ctx.fill();
+  ctx.strokeStyle = '#bfe8c8';
+  ctx.lineWidth = 1.5;
+  roundRect(RANDOM_BTN.x, RANDOM_BTN.y, RANDOM_BTN.w, RANDOM_BTN.h, 8); ctx.stroke();
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 15px system-ui, sans-serif';
+  ctx.fillText('Random opponent', RANDOM_BTN.x + RANDOM_BTN.w / 2, RANDOM_BTN.y + 20);
+
+  ctx.fillStyle = '#ccc';
+  ctx.font = '13px system-ui, sans-serif';
+  ctx.fillText('Click an opponent or Random  •  1–5  •  R to go back', W / 2, 380);
   ctx.textAlign = 'left';
 }
 
@@ -572,13 +605,11 @@ function drawDifficulty() {
   ctx.textAlign = 'center';
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 30px system-ui, sans-serif';
-  ctx.fillText('You are ' + CHARACTERS[playerCharKey].name, W / 2, 120);
+  const oppName = opponentCharKey ? CHARACTERS[opponentCharKey].name : 'Random';
+  ctx.fillText(CHARACTERS[playerCharKey].name + '  vs  ' + oppName, W / 2, 120);
   ctx.fillStyle = '#ffd24a';
   ctx.font = '18px system-ui, sans-serif';
   ctx.fillText('Choose the computer difficulty', W / 2, 165);
-  ctx.fillStyle = '#aaa';
-  ctx.font = '13px system-ui, sans-serif';
-  ctx.fillText('(it becomes one of the other characters at random)', W / 2, 188);
 
   for (const opt of DIFF_OPTIONS) {
     ctx.fillStyle = opt.color;

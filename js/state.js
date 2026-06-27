@@ -5,6 +5,10 @@ let playerCharKey = 'Blue';
 let difficultyName = 'Medium';
 let controlScheme = 'link';      // see CONTROL_SCHEMES (Link's controls by default)
 let controlsOpen = false;        // is the "Switch Controls" dialog showing?
+let opponentCharKey = null;      // chosen opponent, or null for a random one
+
+// "Random opponent" button on the opponent-select screen
+const RANDOM_BTN = { x: 310, y: 326, w: 180, h: 30 };
 
 // "Switch Controls" button on the character-select screen
 const SWITCH_BTN = { x: 310, y: 322, w: 180, h: 32 };
@@ -41,13 +45,17 @@ for (const opt of CHAR_OPTIONS) {
   previews[opt.key] = makeFighter(opt.x + opt.w / 2 - 14, opt.y + 34, 1, opt.key, PLAYER_COMBAT);
 }
 
-function selectChar(key) { playerCharKey = key; gameState = 'difficulty'; }
+function selectChar(key) { playerCharKey = key; gameState = 'opponentSelect'; }
+function setOpponent(key) { opponentCharKey = key; gameState = 'difficulty'; }  // null = random
 
 function startGame(diffName) {
   difficultyName = diffName;
-  // the computer randomly becomes one of the OTHER three characters
-  const others = CHAR_KEYS.filter(k => k !== playerCharKey);
-  const compKey = others[Math.floor(Math.random() * others.length)];
+  // use the chosen opponent, or a random other character if Random was picked
+  let compKey = opponentCharKey;
+  if (!compKey) {
+    const others = CHAR_KEYS.filter(k => k !== playerCharKey);
+    compKey = others[Math.floor(Math.random() * others.length)];
+  }
   // spawn each fighter standing on a platform (left one / right one)
   player = makeFighter(70, 300 - 48, 1, playerCharKey, PLAYER_COMBAT);
   enemy  = makeFighter(660, 300 - 48, -1, compKey, DIFFICULTIES[diffName]);
