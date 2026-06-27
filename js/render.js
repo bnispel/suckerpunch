@@ -482,6 +482,26 @@ function draw() {
   if (controlsOpen) drawControlsDialog();
 }
 
+// Small badge showing the player's chosen character (top-left of later menus).
+function drawChosenBadge() {
+  const c = CHARACTERS[playerCharKey];
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  roundRect(12, 12, 172, 58, 10); ctx.fill();
+  ctx.strokeStyle = c.accent;
+  ctx.lineWidth = 2;
+  roundRect(12, 12, 172, 58, 10); ctx.stroke();
+
+  drawCrewmate(makeFighter(20, 16, 1, playerCharKey, PLAYER_COMBAT));
+
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#9aa0aa';
+  ctx.font = '10px system-ui, sans-serif';
+  ctx.fillText('YOUR PLAYER', 66, 33);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 15px system-ui, sans-serif';
+  ctx.fillText(c.name, 66, 53);
+}
+
 // One character card (caller sets textAlign = center).
 function drawCharCard(opt) {
   const c = CHARACTERS[opt.key];
@@ -539,10 +559,7 @@ function drawOpponentSelect() {
   ctx.textAlign = 'center';
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 30px system-ui, sans-serif';
-  ctx.fillText('Choose your opponent', W / 2, 88);
-  ctx.fillStyle = '#ffd24a';
-  ctx.font = '15px system-ui, sans-serif';
-  ctx.fillText('Playing as ' + CHARACTERS[playerCharKey].name, W / 2, 120);
+  ctx.fillText('Choose your opponent', W / 2, 110);
 
   for (const opt of CHAR_OPTIONS) drawCharCard(opt);
 
@@ -559,6 +576,7 @@ function drawOpponentSelect() {
   ctx.fillStyle = '#ccc';
   ctx.font = '13px system-ui, sans-serif';
   ctx.fillText('Click an opponent or Random  •  1–5  •  R to go back', W / 2, 380);
+  drawChosenBadge();
   ctx.textAlign = 'left';
 }
 
@@ -625,5 +643,6 @@ function drawDifficulty() {
   ctx.fillStyle = '#ccc';
   ctx.font = '14px system-ui, sans-serif';
   ctx.fillText('Click a level  •  press 1 / 2 / 3  •  R to go back', W / 2, 330);
+  drawChosenBadge();
   ctx.textAlign = 'left';
 }
