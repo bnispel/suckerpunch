@@ -6,8 +6,10 @@ function updatePlayer() {
   else player.vx = 0;
 
   const cs = CONTROL_SCHEMES[controlScheme];
-  if (keys[cs.jump] && player.onGround) {
-    player.vy = -JUMP_FORCE; player.onGround = false;
+  if (keys[cs.jump] && (player.onGround || player.inLava)) {
+    // a stronger launch out of the lava so you can clear a platform above
+    player.vy = -JUMP_FORCE * (player.inLava ? 1.4 : 1);
+    player.onGround = false;
   }
   if (cs.fight.some(k => keys[k])) {
     if (player.attack === 'potion') throwPotion(player);
@@ -40,7 +42,7 @@ function updateAI() {
     const targetX = Math.max(p.x, Math.min(enemy.x + enemy.w / 2, p.x + p.w));
     enemy.facing = targetX >= enemy.x + enemy.w / 2 ? 1 : -1;
     enemy.vx = enemy.facing * enemy.speed;
-    if (enemy.onGround) enemy.vy = -JUMP_FORCE; // lava counts as ground, so it can jump
+    if (enemy.onGround) enemy.vy = -JUMP_FORCE * 1.4; // strong launch out of the lava
     return; // skip normal roaming AND edge-avoidance (which would freeze it over lava)
   }
 
