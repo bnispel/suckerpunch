@@ -24,7 +24,7 @@ window.addEventListener('keydown', e => {
     if (e.code === 'KeyC') controlsOpen = true;
     else if (num >= 0) selectChar(CHAR_KEYS[num]);
   } else if (gameState === 'opponentSelect') {
-    if (num >= 0) setOpponent(CHAR_KEYS[num]);
+    if (num >= 0 && CHAR_KEYS[num] !== playerCharKey) setOpponent(CHAR_KEYS[num]);
     else if (e.code === 'KeyR' || e.code === 'Escape') gameState = 'charSelect';
   } else if (gameState === 'difficulty') {
     if (num >= 0 && num < DIFF_OPTIONS.length) startGame(DIFF_OPTIONS[num].name);
@@ -54,7 +54,9 @@ canvas.addEventListener('click', e => {
     for (const opt of CHAR_OPTIONS) if (hitBox(opt, mx, my)) selectChar(opt.key);
   } else if (gameState === 'opponentSelect') {
     if (hitBox(RANDOM_BTN, mx, my)) { setOpponent(null); return; }
-    for (const opt of CHAR_OPTIONS) if (hitBox(opt, mx, my)) setOpponent(opt.key);
+    for (const opt of CHAR_OPTIONS) {
+      if (opt.key !== playerCharKey && hitBox(opt, mx, my)) setOpponent(opt.key);
+    }
   } else if (gameState === 'difficulty') {
     for (const opt of DIFF_OPTIONS) if (hitBox(opt, mx, my)) startGame(opt.name);
   }

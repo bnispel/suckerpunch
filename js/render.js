@@ -502,9 +502,13 @@ function drawChosenBadge() {
   ctx.fillText(c.name, 66, 53);
 }
 
-// One character card (caller sets textAlign = center).
-function drawCharCard(opt) {
+// One character card (caller sets textAlign = center). `disabled` greys it out
+// (used for the player's own character on the opponent screen).
+function drawCharCard(opt, disabled) {
   const c = CHARACTERS[opt.key];
+  ctx.save();
+  if (disabled) ctx.globalAlpha = 0.32;
+
   ctx.fillStyle = 'rgba(255,255,255,0.08)';
   roundRect(opt.x, opt.y, opt.w, opt.h, 12); ctx.fill();
   ctx.strokeStyle = c.accent;
@@ -519,6 +523,13 @@ function drawCharCard(opt) {
   ctx.fillStyle = '#bbb';
   ctx.font = '12px system-ui, sans-serif';
   ctx.fillText(c.power || ATTACK_LABEL[c.attack], opt.x + opt.w / 2, opt.y + opt.h - 14);
+  ctx.restore();
+
+  if (disabled) {
+    ctx.fillStyle = '#ffd24a';
+    ctx.font = 'bold 12px system-ui, sans-serif';
+    ctx.fillText('(your player)', opt.x + opt.w / 2, opt.y + 16);
+  }
 }
 
 function drawCharSelect() {
@@ -561,7 +572,7 @@ function drawOpponentSelect() {
   ctx.font = 'bold 30px system-ui, sans-serif';
   ctx.fillText('Choose your opponent', W / 2, 110);
 
-  for (const opt of CHAR_OPTIONS) drawCharCard(opt);
+  for (const opt of CHAR_OPTIONS) drawCharCard(opt, opt.key === playerCharKey);
 
   // Random opponent button
   ctx.fillStyle = '#2e7d46';
