@@ -90,6 +90,16 @@ function releaseTouch(e) {
 
 canvas.addEventListener('touchstart', e => {
   usingTouch = true;   // reveal the on-screen controls from now on
+
+  // top buttons (Menu / Restart) during or after a match
+  if (gameState === 'playing' || gameState === 'dying' || gameState === 'over') {
+    for (const t of e.changedTouches) {
+      const p = canvasPoint(t);
+      if (hitBox(TOUCH_UI.menu, p.x, p.y))    { goToMenu();    e.preventDefault(); return; }
+      if (hitBox(TOUCH_UI.restart, p.x, p.y)) { restartMatch(); e.preventDefault(); return; }
+    }
+  }
+
   if (gameState === 'playing') {
     let handled = false;
     for (const t of e.changedTouches) {

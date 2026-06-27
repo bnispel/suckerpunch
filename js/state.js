@@ -28,6 +28,12 @@ const TOUCH_BTNS = {
   attack: { x: 648, y: 300, r: 33, label: 'HIT' },
   jump:   { x: 742, y: 344, r: 39, label: 'JUMP' },
 };
+// Top-of-screen touch buttons shown during/after a match.
+const TOUCH_UI = {
+  menu:    { x: 304, y: 14, w: 90, h: 30, label: 'Menu' },
+  restart: { x: 406, y: 14, w: 90, h: 30, label: 'Restart' },
+};
+function clearTouch() { touch.left = touch.right = touch.jump = touch.attack = false; }
 
 // "Switch Controls" button on the character-select screen
 const SWITCH_BTN = { x: 310, y: 322, w: 180, h: 32 };
@@ -84,9 +90,28 @@ function startGame(diffName) {
   explosions = [];
   winner = null;
   aiTimer = 0;
+  clearTouch();
   bumpPlayCount();
   gameState = 'playing';
 }
+
+// Replay the current matchup (same fighters + difficulty).
+function restartMatch() {
+  const pKey = player.charKey, eKey = enemy.charKey;
+  player = makeFighter(70, 300 - 48, 1, pKey, PLAYER_COMBAT);
+  enemy  = makeFighter(660, 300 - 48, -1, eKey, DIFFICULTIES[difficultyName]);
+  projectiles = [];
+  potions = [];
+  bolts = [];
+  explosions = [];
+  winner = null;
+  aiTimer = 0;
+  clearTouch();
+  bumpPlayCount();
+  gameState = 'playing';
+}
+
+function goToMenu() { clearTouch(); gameState = 'charSelect'; }
 
 // build a default match so the arena renders behind the menu overlay
 player = makeFighter(70, 300 - 48, 1, 'Blue', PLAYER_COMBAT);

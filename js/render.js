@@ -459,6 +459,27 @@ function drawExplosions() {
   }
 }
 
+// Top Menu / Restart buttons for touch play.
+function drawTouchUI() {
+  ctx.save();
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (const name in TOUCH_UI) {
+    const b = TOUCH_UI[name];
+    ctx.globalAlpha = 0.82;
+    ctx.fillStyle = '#23232e';
+    roundRect(b.x, b.y, b.w, b.h, 8); ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = '#ffffff88';
+    ctx.lineWidth = 1.5;
+    roundRect(b.x, b.y, b.w, b.h, 8); ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px system-ui, sans-serif';
+    ctx.fillText(b.label, b.x + b.w / 2, b.y + b.h / 2 + 1);
+  }
+  ctx.restore();
+}
+
 // On-screen touch buttons (translucent so the action stays visible behind).
 function drawTouchControls() {
   ctx.save();
@@ -505,6 +526,11 @@ function draw() {
   else if (gameState === 'difficulty') drawDifficulty();
   else if (gameState === 'over') drawGameOver();
   if (controlsOpen) drawControlsDialog();
+
+  // touch Menu/Restart sit on top of the match and the win screen
+  if (usingTouch && (gameState === 'playing' || gameState === 'dying' || gameState === 'over')) {
+    drawTouchUI();
+  }
 }
 
 // Small badge showing the player's chosen character (top-left of later menus).
