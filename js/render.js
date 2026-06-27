@@ -253,23 +253,62 @@ function drawCrewmate(f) {
 }
 
 function drawHealthBars() {
-  drawBar(20, 20, player, false);
-  drawBar(W - 220, 20, enemy, true);
+  drawDial(56, 56, 38, player);
+  drawDial(W - 56, 56, 38, enemy);
 }
 
-function drawBar(bx, by, f, rightAlign) {
-  const w = 200, h = 18;
-  ctx.fillStyle = '#00000066';
-  roundRect(bx - 3, by - 3, w + 6, h + 22, 5); ctx.fill();
-  ctx.fillStyle = '#3a3a3a';
-  roundRect(bx, by, w, h, 4); ctx.fill();
-  const frac = f.hp / f.maxHp;
-  ctx.fillStyle = f.hp > 30 ? f.accent : '#ff4040';
-  roundRect(bx, by, Math.max(0, w * frac), h, 4); ctx.fill();
+// Circular HP gauge: a segmented ring that fills with the fighter's colour,
+// with the current HP shown in a hub at the centre.
+function drawDial(cx, cy, R, f) {
+  const frac = Math.max(0, f.hp / f.maxHp);
+  const fill = f.hp > 30 ? f.accent : '#ff4040';
+
+  // empty disc behind the fill
+  ctx.fillStyle = '#2a2a30';
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
+
+  // remaining-HP pie, sweeping clockwise from the top
+  if (frac > 0) {
+    ctx.fillStyle = fill;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, R, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2, false);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // spokes every 45° give it the segmented look
+  ctx.strokeStyle = '#111';
+  ctx.lineWidth = 3;
+  for (let i = 0; i < 8; i++) {
+    const a = -Math.PI / 2 + i * Math.PI / 4;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
+    ctx.stroke();
+  }
+
+  // thick outer ring
+  ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
+
+  // white centre hub with the HP number
+  const rIn = R * 0.44;
   ctx.fillStyle = '#fff';
-  ctx.font = 'bold 13px system-ui, sans-serif';
-  ctx.textAlign = rightAlign ? 'right' : 'left';
-  ctx.fillText(f.name + '  ' + f.hp + ' HP', rightAlign ? bx + w : bx, by + h + 14);
+  ctx.beginPath(); ctx.arc(cx, cy, rIn, 0, Math.PI * 2); ctx.fill();
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.arc(cx, cy, rIn, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = '#111';
+  ctx.font = 'bold ' + (f.hp >= 100 ? 13 : 16) + 'px system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(String(f.hp), cx, cy + 1);
+  ctx.textBaseline = 'alphabetic';
+
+  // name under the dial
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 12px system-ui, sans-serif';
+  ctx.fillText(f.name, cx, cy + R + 15);
   ctx.textAlign = 'left';
 }
 
