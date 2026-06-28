@@ -227,11 +227,12 @@ function drawCrewmate(f) {
 
   // jagged mouth + lashing tongue — only the melee fighter has these.
   if (f.attack === 'melee') {
+    // mouth centred so the teeth stay fully inside the body (±11 wide)
     ctx.fillStyle = '#2b2b30';
-    roundRect(-2, 24, 14, 11, 3); ctx.fill();
+    roundRect(-7, 24, 14, 11, 3); ctx.fill();
     ctx.fillStyle = '#ffffff';
     for (let i = 0; i < 3; i++) {
-      const tx = i * 5;
+      const tx = -7 + i * 5;
       ctx.beginPath(); ctx.moveTo(tx, 24); ctx.lineTo(tx + 4, 24); ctx.lineTo(tx + 2, 29); ctx.closePath(); ctx.fill();
       ctx.beginPath(); ctx.moveTo(tx, 35); ctx.lineTo(tx + 4, 35); ctx.lineTo(tx + 2, 30); ctx.closePath(); ctx.fill();
     }
@@ -240,17 +241,17 @@ function drawCrewmate(f) {
     const ext = attacking ? (ATTACK_REACH * Math.sin((1 - f.attackTimer / ATTACK_ACTIVE) * Math.PI)) : 0;
     if (f.storm) {
       // a blue lightning bolt — only visible while attacking, sharp zig-zag,
-      // no glow. Stays hidden when idle.
+      // no glow. Stays hidden when idle. Emerges from the mouth.
       if (attacking) {
         const len = 20 + ext;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'miter';
         ctx.beginPath();
-        ctx.moveTo(11, 30);
-        ctx.lineTo(11 + len * 0.32, 23);
-        ctx.lineTo(11 + len * 0.5, 32);
-        ctx.lineTo(11 + len * 0.74, 25);
-        ctx.lineTo(11 + len, 31);
+        ctx.moveTo(7, 30);
+        ctx.lineTo(7 + len * 0.32, 23);
+        ctx.lineTo(7 + len * 0.5, 32);
+        ctx.lineTo(7 + len * 0.74, 25);
+        ctx.lineTo(7 + len, 31);
         ctx.strokeStyle = '#1f6fff'; ctx.lineWidth = 3; ctx.stroke();
         ctx.strokeStyle = '#bfe0ff'; ctx.lineWidth = 1; ctx.stroke();
       }
@@ -260,9 +261,9 @@ function drawCrewmate(f) {
       ctx.lineWidth = 5;
       ctx.lineCap = 'round';
       ctx.beginPath();
-      ctx.moveTo(11, 30);
-      ctx.quadraticCurveTo(22 + ext * 0.6, 22 + lash, 18 + ext, 30);
-      if (!attacking) ctx.quadraticCurveTo(30, 38 - lash, 25, 26); // little curl when idle
+      ctx.moveTo(7, 30);
+      ctx.quadraticCurveTo(18 + ext * 0.6, 22 + lash, 14 + ext, 30);
+      if (!attacking) ctx.quadraticCurveTo(26, 38 - lash, 21, 26); // little curl when idle
       ctx.stroke();
     }
   }
