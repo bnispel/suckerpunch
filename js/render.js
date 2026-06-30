@@ -106,75 +106,83 @@ function drawPlatform(p) {
 // Drawn in the same transformed space as a crewmate (origin = top centre,
 // already flipped to face travel; +x is forward).
 function drawBoxer(f, step, hurtFlash) {
-  const skin   = hurtFlash ? '#ffffff' : '#e8a060';
-  const jersey = hurtFlash ? '#ffffff' : '#c0202a';
-  const trim   = hurtFlash ? '#ffffff' : '#ffcf33';
-  const glove  = hurtFlash ? '#ffffff' : '#c01818';
-  const hair   = hurtFlash ? '#dddddd' : '#2b2b2b';
-  const shoe   = hurtFlash ? '#ffffff' : '#3a2a1a';
+  const skin    = hurtFlash ? '#ffffff' : '#f0b074';
+  const skinSh  = hurtFlash ? '#eeeeee' : '#d2935a';
+  const jersey  = hurtFlash ? '#ffffff' : '#d42a2a';
+  const trim    = hurtFlash ? '#ffffff' : '#ffd23a';
+  const glove   = hurtFlash ? '#ffffff' : '#d42a2a';
+  const gloveHi = hurtFlash ? '#ffffff' : '#ff7a6a';
+  const hair    = hurtFlash ? '#cccccc' : '#3a2516';
+  const shoe    = hurtFlash ? '#ffffff' : '#5a3a1f';
+  const OUT = '#241712';   // bold cartoon outline
 
   const attacking = f.attackTimer > 0;
   const ext = attacking ? (ATTACK_REACH * Math.sin((1 - f.attackTimer / ATTACK_ACTIVE) * Math.PI)) : 0;
 
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
+  const ink = (lw) => { ctx.strokeStyle = OUT; ctx.lineWidth = lw || 2; ctx.stroke(); };
 
-  // legs (tan) + shoes, with a little walk shuffle
-  ctx.strokeStyle = skin; ctx.lineWidth = 6;
-  ctx.beginPath(); ctx.moveTo(-5, 40); ctx.lineTo(-6, 46 + step); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(5, 40);  ctx.lineTo(6, 46 - step); ctx.stroke();
-  ctx.fillStyle = shoe;
-  ctx.beginPath(); ctx.ellipse(-7, 47 + step, 5, 2.6, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(8, 47 - step, 5, 2.6, 0, 0, Math.PI * 2); ctx.fill();
+  // rear arm + glove (behind the body)
+  ctx.fillStyle = skin; roundRect(-13, 23, 7, 7, 3); ctx.fill(); ink(2);
+  ctx.fillStyle = glove; ctx.beginPath(); ctx.arc(-15, 31, 5.5, 0, Math.PI * 2); ctx.fill(); ink(2);
+  ctx.fillStyle = gloveHi; ctx.beginPath(); ctx.arc(-16.5, 29.5, 1.8, 0, Math.PI * 2); ctx.fill();
 
-  // rear arm tucked by the hip
-  ctx.strokeStyle = skin; ctx.lineWidth = 5;
-  ctx.beginPath(); ctx.moveTo(-7, 20); ctx.lineTo(-13, 28); ctx.stroke();
-  ctx.fillStyle = glove;
-  ctx.beginPath(); ctx.arc(-15, 30, 4.5, 0, Math.PI * 2); ctx.fill();
-
-  // shorts (red with yellow trim)
-  ctx.fillStyle = jersey; roundRect(-9, 31, 18, 10, 3); ctx.fill();
-  ctx.strokeStyle = trim; ctx.lineWidth = 2; roundRect(-9, 31, 18, 10, 3); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(0, 33); ctx.lineTo(0, 41); ctx.stroke();   // leg split
-
-  // jersey (red with yellow trim + short sleeves) and a little number mark
-  ctx.fillStyle = jersey; roundRect(-10, 17, 20, 16, 4); ctx.fill();
-  ctx.strokeStyle = trim; ctx.lineWidth = 2; roundRect(-10, 17, 20, 16, 4); ctx.stroke();
-  ctx.fillStyle = trim;
-  roundRect(-13, 17, 5, 7, 2); ctx.fill();   // rear sleeve
-  roundRect(8, 17, 5, 7, 2); ctx.fill();     // front sleeve
-  roundRect(-3, 22, 3, 7, 1); ctx.fill();    // "1"
-  ctx.beginPath(); ctx.arc(4, 25, 3.2, 0, Math.PI * 2); ctx.fill();   // "0"
-  ctx.fillStyle = jersey; ctx.beginPath(); ctx.arc(4, 25, 1.4, 0, Math.PI * 2); ctx.fill();
-
-  // front arm + glove — jabs forward when attacking
-  const reach = 9 + ext;
-  ctx.strokeStyle = skin; ctx.lineWidth = 5;
-  ctx.beginPath(); ctx.moveTo(7, 20); ctx.lineTo(reach, 24); ctx.stroke();
-  ctx.fillStyle = glove;
-  ctx.beginPath(); ctx.arc(reach + 3, 24, 6, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = '#7a0e0e'; ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.arc(reach + 3, 24, 6, 0, Math.PI * 2); ctx.stroke();
-
-  // neck + head
-  ctx.fillStyle = skin;
-  ctx.fillRect(-2, 14, 4, 5);
-  ctx.beginPath(); ctx.arc(0, 9, 8, 0, Math.PI * 2); ctx.fill();
-
-  // hair: dark crown + a few messy spikes
-  ctx.fillStyle = hair;
-  ctx.beginPath(); ctx.arc(0, 9, 8, Math.PI * 1.12, Math.PI * 1.88); ctx.closePath(); ctx.fill();
-  ctx.strokeStyle = hair; ctx.lineWidth = 1.6;
-  for (let i = -3; i <= 3; i++) {
-    ctx.beginPath(); ctx.moveTo(i * 2.2, 4.5); ctx.lineTo(i * 2.2 + 1.4, 0); ctx.stroke();
+  // stubby legs + big rounded shoes
+  for (const s of [-1, 1]) {
+    const lx = s * 5, off = s * step * 0.6;
+    ctx.fillStyle = skin; roundRect(lx - 3.5, 39, 7, 6, 2); ctx.fill(); ink(2);
+    ctx.fillStyle = shoe;
+    ctx.beginPath(); ctx.ellipse(lx + s * 2.5, 45.5 + off, 6.5, 3.4, 0, 0, Math.PI * 2); ctx.fill(); ink(2);
   }
 
-  // happy face: closed eyes + smile
-  ctx.strokeStyle = '#5a3a1a'; ctx.lineWidth = 1.4;
-  ctx.beginPath(); ctx.arc(-3, 8, 1.7, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
-  ctx.beginPath(); ctx.arc(3, 8, 1.7, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
-  ctx.beginPath(); ctx.arc(0, 9, 3.6, 0.12 * Math.PI, 0.88 * Math.PI); ctx.stroke();
+  // shorts (red) with a yellow belt
+  ctx.fillStyle = jersey; roundRect(-10, 33, 20, 9, 5); ctx.fill(); ink(2);
+  ctx.fillStyle = trim; roundRect(-10, 31.5, 20, 4, 2); ctx.fill(); ink(1.5);
+
+  // torso / jersey (big, rounded, bold outline) with collar + number
+  ctx.fillStyle = jersey; roundRect(-11, 20, 22, 15, 7); ctx.fill(); ink(2.5);
+  ctx.fillStyle = trim; roundRect(-7, 20, 14, 3, 1.5); ctx.fill();          // collar band
+  ctx.fillStyle = trim;
+  roundRect(-3.5, 24, 3, 7, 1); ctx.fill();                                 // "1"
+  ctx.beginPath(); ctx.arc(4, 27.5, 3.3, 0, Math.PI * 2); ctx.fill();       // "0"
+  ctx.fillStyle = jersey; ctx.beginPath(); ctx.arc(4, 27.5, 1.5, 0, Math.PI * 2); ctx.fill();
+
+  // front arm + big glove — jabs forward when attacking
+  const reach = 10 + ext;
+  ctx.strokeStyle = skin; ctx.lineWidth = 7;
+  ctx.beginPath(); ctx.moveTo(8, 25); ctx.lineTo(reach, 25); ctx.stroke();
+  ctx.strokeStyle = OUT; ctx.lineWidth = 1.5;   // arm underline
+  ctx.beginPath(); ctx.moveTo(9, 28.5); ctx.lineTo(reach, 28.5); ctx.stroke();
+  ctx.fillStyle = glove; ctx.beginPath(); ctx.arc(reach + 4, 25, 6.5, 0, Math.PI * 2); ctx.fill(); ink(2);
+  ctx.fillStyle = gloveHi; ctx.beginPath(); ctx.arc(reach + 2.5, 23, 2.2, 0, Math.PI * 2); ctx.fill();
+
+  // big cartoon head
+  ctx.fillStyle = skin; ctx.beginPath(); ctx.arc(0, 12, 10, 0, Math.PI * 2); ctx.fill(); ink(2.5);
+  // ears
+  ctx.fillStyle = skin;
+  ctx.beginPath(); ctx.arc(-10, 13, 2.4, 0, Math.PI * 2); ctx.fill(); ink(1.5);
+  ctx.beginPath(); ctx.arc(10, 13, 2.4, 0, Math.PI * 2); ctx.fill(); ink(1.5);
+
+  // chunky dark hair: rounded cap + a jagged fringe
+  ctx.fillStyle = hair;
+  ctx.beginPath();
+  ctx.arc(0, 12, 10, Math.PI * 1.02, Math.PI * 1.98, false);
+  ctx.lineTo(8, 9); ctx.lineTo(5, 11); ctx.lineTo(2, 8); ctx.lineTo(-1, 11);
+  ctx.lineTo(-4, 8); ctx.lineTo(-7, 11); ctx.lineTo(-9, 8.5);
+  ctx.closePath(); ctx.fill(); ink(1.5);
+
+  // face: big eyes + pupils, nose, smile
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath(); ctx.arc(-3.6, 13, 2.5, 0, Math.PI * 2); ctx.fill(); ink(1);
+  ctx.beginPath(); ctx.arc(3.6, 13, 2.5, 0, Math.PI * 2); ctx.fill(); ink(1);
+  ctx.fillStyle = '#2a1a10';
+  ctx.beginPath(); ctx.arc(-3, 13.3, 1.1, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(4, 13.3, 1.1, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = skinSh;                                   // nose
+  ctx.beginPath(); ctx.arc(0.4, 15.5, 1.7, 0, Math.PI * 2); ctx.fill(); ink(1);
+  ctx.strokeStyle = OUT; ctx.lineWidth = 1.5;               // smile
+  ctx.beginPath(); ctx.arc(0, 16, 4, 0.12 * Math.PI, 0.88 * Math.PI); ctx.stroke();
 }
 
 // Among-Us-style crewmate with per-character flourishes (hat, cape, fire, etc).
