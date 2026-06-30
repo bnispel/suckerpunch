@@ -1,31 +1,32 @@
 // Movement, collisions, lava, and per-frame timers for a fighter.
+// Platforms are one-way (Smash-style): you pass up through them from below and
+// from the sides, and only land when descending onto the top surface.
 function applyPhysics(f) {
   f.inLava = false;
-  // horizontal move + platform walls. While launching out of the lava we pass
-  // through platforms, so skip the side-wall check too (otherwise it snaps the
-  // fighter to a platform edge mid-rise, which looks like a teleport).
+
+  // horizontal move (no side walls — platforms are pass-through)
   f.x += f.vx;
-  if (!f.escapingLava) {
-    for (const p of platforms) {
-      if (rectsOverlap(f, p)) {
-        if (f.vx > 0) f.x = p.x - f.w;
-        else if (f.vx < 0) f.x = p.x + p.w;
-      }
-    }
-  }
+
   // gravity + vertical move — Cape glides, drifting down slowly thanks to the cape
   const g = (f.cape && f.vy > 0) ? GRAVITY * 0.32 : GRAVITY;
   f.vy += g;
   if (f.cape && f.vy > 3.2) f.vy = 3.2;   // cap the cape's descent for a floaty glide
+  const prevBottom = f.y + f.h;           // feet before this move
   f.y += f.vy;
   f.onGround = false;
-  for (const p of platforms) {
-    if (rectsOverlap(f, p)) {
-      if (f.vy > 0) { f.y = p.y - f.h; f.vy = 0; f.onGround = true; f.escapingLava = false; }
-      // launching out of lava passes up through platforms instead of bonking
-      else if (f.vy < 0 && !f.escapingLava) { f.y = p.y + p.h; f.vy = 0; }
+
+  // land on a platform top only while descending and only if the feet were at
+  // or above the top last frame (so jumping up through it doesn't snag).
+  if (f.vy >= 0) {
+    for (const p of platforms) {
+      if (prevBottom <= p.y + 6 && f.y + f.h >= p.y &&
+          f.x + f.w > p.x && f.x < p.x + p.w) {
+        f.y = p.y - f.h; f.vy = 0; f.onGround = true; f.escapingLava = false;
+        break;
+      }
     }
   }
+
   // arena side walls
   if (f.x < 0) f.x = 0;
   if (f.x + f.w > W) f.x = W - f.w;
