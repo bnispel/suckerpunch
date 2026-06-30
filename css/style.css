@@ -20,10 +20,10 @@ canvas {
   border: 4px solid #1b1b1b;
   border-radius: 6px;
   background: #5c94fc;
-  /* scale to the screen while keeping the 2:1 aspect ratio */
-  width: min(96vw, calc(80vh * 2), 1000px);
+  /* scale to the screen while keeping the arena's aspect ratio (~iPad mini) */
+  width: min(96vw, calc(86vh * 1.481), 1100px);
   height: auto;
-  aspect-ratio: 2 / 1;
+  aspect-ratio: 800 / 540;
   touch-action: none;
 }
 #hint { margin-top: 8px; font-size: 13px; opacity: 0.85; text-align: center; }
@@ -32,7 +32,7 @@ canvas {
    held in portrait while a match is on — see the rules below). */
 #touch-bar {
   display: none;
-  width: min(96vw, calc(80vh * 2), 1000px);
+  width: min(96vw, calc(86vh * 1.481), 1100px);
   margin-top: 12px;
   justify-content: space-between;
   align-items: center;

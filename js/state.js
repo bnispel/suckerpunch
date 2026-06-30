@@ -23,10 +23,10 @@ const RANDOM_BTN = { x: 310, y: 326, w: 180, h: 30 };
 let usingTouch = false;
 const touch = { left: false, right: false, jump: false, attack: false };
 const TOUCH_BTNS = {
-  left:   { x: 58,  y: 342, r: 33, label: '◀' },
-  right:  { x: 142, y: 342, r: 33, label: '▶' },
-  attack: { x: 648, y: 300, r: 33, label: 'HIT' },
-  jump:   { x: 742, y: 344, r: 39, label: 'JUMP' },
+  left:   { x: 58,  y: 486, r: 33, label: '◀' },
+  right:  { x: 142, y: 486, r: 33, label: '▶' },
+  attack: { x: 648, y: 448, r: 33, label: 'HIT' },
+  jump:   { x: 742, y: 488, r: 39, label: 'JUMP' },
 };
 // Top-of-screen touch buttons shown during/after a match.
 const TOUCH_UI = {
@@ -75,6 +75,14 @@ for (const opt of CHAR_OPTIONS) {
 function selectChar(key) { playerCharKey = key; gameState = 'opponentSelect'; }
 function setOpponent(key) { opponentCharKey = key; gameState = 'difficulty'; }  // null = random
 
+// Spawn the two fighters standing on the leftmost / rightmost rocks.
+function placeOnPlatforms(pKey, eKey, diff) {
+  const sorted = [...platforms].sort((a, b) => (a.x + a.w / 2) - (b.x + b.w / 2));
+  const pP = sorted[0], eP = sorted[sorted.length - 1];
+  player = makeFighter(Math.round(pP.x + pP.w / 2 - 14), pP.y - 48, 1, pKey, PLAYER_COMBAT);
+  enemy  = makeFighter(Math.round(eP.x + eP.w / 2 - 14), eP.y - 48, -1, eKey, DIFFICULTIES[diff]);
+}
+
 function startGame(diffName) {
   difficultyName = diffName;
   // use the chosen opponent, or a random other character if Random was picked
@@ -83,9 +91,8 @@ function startGame(diffName) {
     const others = CHAR_KEYS.filter(k => k !== playerCharKey);
     compKey = others[Math.floor(Math.random() * others.length)];
   }
-  // spawn each fighter standing on a platform (left one / right one)
-  player = makeFighter(70, 300 - 48, 1, playerCharKey, PLAYER_COMBAT);
-  enemy  = makeFighter(660, 300 - 48, -1, compKey, DIFFICULTIES[diffName]);
+  buildArena();                                  // fresh random platforms each match
+  placeOnPlatforms(playerCharKey, compKey, diffName);
   projectiles = [];
   potions = [];
   bolts = [];
@@ -98,11 +105,9 @@ function startGame(diffName) {
   gameState = 'playing';
 }
 
-// Replay the current matchup (same fighters + difficulty).
+// Replay the current matchup (same fighters + difficulty) on the same arena.
 function restartMatch() {
-  const pKey = player.charKey, eKey = enemy.charKey;
-  player = makeFighter(70, 300 - 48, 1, pKey, PLAYER_COMBAT);
-  enemy  = makeFighter(660, 300 - 48, -1, eKey, DIFFICULTIES[difficultyName]);
+  placeOnPlatforms(player.charKey, enemy.charKey, difficultyName);
   projectiles = [];
   potions = [];
   bolts = [];
@@ -118,8 +123,7 @@ function restartMatch() {
 function goToMenu() { clearTouch(); gameState = 'charSelect'; }
 
 // build a default match so the arena renders behind the menu overlay
-player = makeFighter(70, 300 - 48, 1, 'Blue', PLAYER_COMBAT);
-enemy  = makeFighter(660, 300 - 48, -1, 'Green', DIFFICULTIES.Medium);
+placeOnPlatforms('Blue', 'Green', 'Medium');
 projectiles = [];
 potions = [];
 bolts = [];

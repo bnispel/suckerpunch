@@ -8,7 +8,7 @@ let frame = 0;  // global animation clock, incremented once per rendered frame
 
 const GRAVITY = 0.7;
 const JUMP_FORCE = 13;
-const LAVA_Y = 362;        // top of the lava sea
+const LAVA_Y = 502;        // top of the lava sea (canvas is 800x540)
 
 const ATTACK_REACH = 46;   // how far in front the tongue reaches
 const ATTACK_ACTIVE = 18;  // frames the lash is out
