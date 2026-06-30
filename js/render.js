@@ -1,5 +1,5 @@
 // All drawing: background, lava, rocks, crewmates, projectiles, potions, UI.
-const ATTACK_LABEL = { melee: 'Tongue lash', triangle: 'Triangle shot', fireball: 'Fireball', potion: 'Potion splash', stick: 'Sticks' };
+const ATTACK_LABEL = { melee: 'Tongue lash', triangle: 'Triangle shot', fireball: 'Fireball', potion: 'Potion splash' };
 
 function drawBackground() {
   // reddish lava-planet sky
@@ -100,35 +100,6 @@ function drawLava() {
 
 function drawPlatform(p) {
   drawTriangleRock(p);
-}
-
-// Sticky: an all-black stick figure (no face) that throws sticks.
-function drawStickman(f, step, hurtFlash) {
-  const c = hurtFlash ? '#ffffff' : '#111111';
-  ctx.strokeStyle = c; ctx.fillStyle = c;
-  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  ctx.lineWidth = 3;
-
-  // solid head (no eyes/mouth)
-  ctx.beginPath(); ctx.arc(0, 8, 5, 0, Math.PI * 2); ctx.fill();
-  // spine
-  ctx.beginPath(); ctx.moveTo(0, 13); ctx.lineTo(0, 30); ctx.stroke();
-  // legs (shuffle while walking)
-  ctx.beginPath(); ctx.moveTo(0, 30); ctx.lineTo(-6, 46 + step); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(0, 30); ctx.lineTo(6, 46 - step); ctx.stroke();
-  // rear arm
-  ctx.beginPath(); ctx.moveTo(0, 17); ctx.lineTo(-8, 24); ctx.stroke();
-
-  // throwing arm: holds a stick, snaps forward right after a throw
-  const justThrew = f.shootCD > f.shootCooldown - 9;
-  ctx.beginPath();
-  ctx.moveTo(0, 17);
-  ctx.lineTo(justThrew ? 11 : 7, justThrew ? 13 : 11);
-  ctx.stroke();
-  if (!justThrew) { // a stick cocked in hand
-    ctx.lineWidth = 2.5;
-    ctx.beginPath(); ctx.moveTo(7, 4); ctx.lineTo(7, 17); ctx.stroke();
-  }
 }
 
 // Mike: a little human boxer (skin head + hair, red/yellow kit, gloves, shoes).
@@ -241,14 +212,9 @@ function drawCrewmate(f) {
 
   const BW = 22, halfW = BW / 2, bodyTop = 2, bodyBot = 40;
 
-  // Mike (boxer) and Sticky (stick man) aren't crewmates — drawn separately.
+  // Mike is a little human boxer, not a crewmate — drawn entirely separately.
   if (f.boxer) {
     drawBoxer(f, step, hurtFlash);
-    ctx.restore();
-    return;
-  }
-  if (f.stickman) {
-    drawStickman(f, step, hurtFlash);
     ctx.restore();
     return;
   }
@@ -486,16 +452,6 @@ function drawProjectiles() {
       ctx.fillStyle = '#d11616'; ctx.beginPath(); ctx.arc(0, 0, pr.size * fl, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#ff7a18'; ctx.beginPath(); ctx.arc(0, 0, pr.size * 0.66 * fl, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#ffd24a'; ctx.beginPath(); ctx.arc(0, 0, pr.size * 0.33 * fl, 0, Math.PI * 2); ctx.fill();
-    } else if (pr.kind === 'stick') {
-      // a black stick tumbling through the air
-      ctx.rotate(pr.spin);
-      ctx.strokeStyle = '#111111';
-      ctx.lineWidth = 3;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(-pr.size, 0);
-      ctx.lineTo(pr.size, 0);
-      ctx.stroke();
     } else {
       // spinning triangle
       ctx.rotate(pr.spin);
@@ -714,10 +670,10 @@ function drawCharCard(opt, disabled) {
   drawCrewmate(previews[opt.key]);
 
   ctx.fillStyle = '#fff';
-  ctx.font = 'bold 12px system-ui, sans-serif';
+  ctx.font = 'bold 13px system-ui, sans-serif';
   ctx.fillText(c.name, opt.x + opt.w / 2, opt.y + opt.h - 34);
   ctx.fillStyle = '#bbb';
-  ctx.font = '10px system-ui, sans-serif';
+  ctx.font = '11px system-ui, sans-serif';
   ctx.fillText(c.power || ATTACK_LABEL[c.attack], opt.x + opt.w / 2, opt.y + opt.h - 14);
   ctx.restore();
 
@@ -756,7 +712,7 @@ function drawCharSelect() {
 
   ctx.fillStyle = '#ccc';
   ctx.font = '13px system-ui, sans-serif';
-  ctx.fillText('Click a character  •  or press 1 – 7', W / 2, 380);
+  ctx.fillText('Click a character  •  or press 1 – 6', W / 2, 380);
 
   ctx.textAlign = 'right';
   ctx.fillStyle = '#888';
@@ -787,7 +743,7 @@ function drawOpponentSelect() {
 
   ctx.fillStyle = '#ccc';
   ctx.font = '13px system-ui, sans-serif';
-  ctx.fillText('Click an opponent or Random  •  1–7  •  R to go back', W / 2, 380);
+  ctx.fillText('Click an opponent or Random  •  1–6  •  R to go back', W / 2, 380);
   drawChosenBadge();
   ctx.textAlign = 'left';
 }
