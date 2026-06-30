@@ -34,7 +34,7 @@ function resolveAttack(attacker, target) {
 function shootProjectile(f) {
   if (f.shootCD > 0) return;
   f.shootCD = f.shootCooldown;
-  const kind = f.attack === 'fireball' ? 'fire' : 'triangle';
+  const kind = f.attack === 'fireball' ? 'fire' : f.attack === 'slime' ? 'slime' : 'triangle';
   const ox = f.x + f.w / 2 + f.facing * 14;
   const oy = f.y + 22;
   projectiles.push({

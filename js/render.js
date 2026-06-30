@@ -1,5 +1,5 @@
 // All drawing: background, lava, rocks, crewmates, projectiles, potions, UI.
-const ATTACK_LABEL = { melee: 'Tongue lash', triangle: 'Triangle shot', fireball: 'Fireball', potion: 'Potion splash' };
+const ATTACK_LABEL = { melee: 'Tongue lash', triangle: 'Triangle shot', fireball: 'Fireball', potion: 'Potion splash', slime: 'Slime balls' };
 
 function drawBackground() {
   // reddish lava-planet sky
@@ -100,6 +100,32 @@ function drawLava() {
 
 function drawPlatform(p) {
   drawTriangleRock(p);
+}
+
+// Slim: a Minecraft-style slime cube (jiggly square, inner cube, blocky face).
+function drawSlime(f, hurtFlash) {
+  const body  = hurtFlash ? '#ffffff' : '#aacc2a';
+  const inner = hurtFlash ? '#eeeeee' : '#9cc024';
+  const out   = hurtFlash ? '#cccccc' : '#5e7314';
+  const face  = '#1c2a10';
+
+  // gentle squash/jiggle about the base
+  const sq = 1 + Math.sin(frame * 0.12 + (f === enemy ? 1 : 0)) * 0.05;
+  ctx.save();
+  ctx.translate(0, 46); ctx.scale(1 / sq, sq); ctx.translate(0, -46);
+
+  // outer cube
+  ctx.fillStyle = body; roundRect(-13, 16, 26, 30, 4); ctx.fill();
+  ctx.strokeStyle = out; ctx.lineWidth = 2; roundRect(-13, 16, 26, 30, 4); ctx.stroke();
+  // inner cube
+  ctx.fillStyle = inner; roundRect(-7, 21, 13, 13, 3); ctx.fill();
+  // blocky face: two eyes + mouth
+  ctx.fillStyle = face;
+  ctx.fillRect(-8, 25, 5, 5);
+  ctx.fillRect(3, 24, 5, 5);
+  ctx.fillRect(-2, 37, 5, 4);
+
+  ctx.restore();
 }
 
 // Mike: a little human boxer (skin head + hair, red/yellow kit, gloves, shoes).
@@ -212,9 +238,14 @@ function drawCrewmate(f) {
 
   const BW = 22, halfW = BW / 2, bodyTop = 2, bodyBot = 40;
 
-  // Mike is a little human boxer, not a crewmate — drawn entirely separately.
+  // Mike (boxer) and Slim (slime cube) aren't crewmates — drawn separately.
   if (f.boxer) {
     drawBoxer(f, step, hurtFlash);
+    ctx.restore();
+    return;
+  }
+  if (f.slime) {
+    drawSlime(f, hurtFlash);
     ctx.restore();
     return;
   }
@@ -452,6 +483,14 @@ function drawProjectiles() {
       ctx.fillStyle = '#d11616'; ctx.beginPath(); ctx.arc(0, 0, pr.size * fl, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#ff7a18'; ctx.beginPath(); ctx.arc(0, 0, pr.size * 0.66 * fl, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#ffd24a'; ctx.beginPath(); ctx.arc(0, 0, pr.size * 0.33 * fl, 0, Math.PI * 2); ctx.fill();
+    } else if (pr.kind === 'slime') {
+      // a wobbling green slime ball
+      const wob = 1 + Math.sin(frame * 0.3 + pr.x) * 0.12;
+      ctx.fillStyle = '#aacc2a';
+      ctx.beginPath(); ctx.ellipse(0, 0, pr.size * wob, pr.size / wob, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#5e7314'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.beginPath(); ctx.arc(-pr.size * 0.3, -pr.size * 0.3, pr.size * 0.28, 0, Math.PI * 2); ctx.fill();
     } else {
       // spinning triangle
       ctx.rotate(pr.spin);
@@ -670,10 +709,10 @@ function drawCharCard(opt, disabled) {
   drawCrewmate(previews[opt.key]);
 
   ctx.fillStyle = '#fff';
-  ctx.font = 'bold 13px system-ui, sans-serif';
+  ctx.font = 'bold 12px system-ui, sans-serif';
   ctx.fillText(c.name, opt.x + opt.w / 2, opt.y + opt.h - 34);
   ctx.fillStyle = '#bbb';
-  ctx.font = '11px system-ui, sans-serif';
+  ctx.font = '10px system-ui, sans-serif';
   ctx.fillText(c.power || ATTACK_LABEL[c.attack], opt.x + opt.w / 2, opt.y + opt.h - 14);
   ctx.restore();
 
@@ -712,7 +751,7 @@ function drawCharSelect() {
 
   ctx.fillStyle = '#ccc';
   ctx.font = '13px system-ui, sans-serif';
-  ctx.fillText('Click a character  •  or press 1 – 6', W / 2, 380);
+  ctx.fillText('Click a character  •  or press 1 – 7', W / 2, 380);
 
   ctx.textAlign = 'right';
   ctx.fillStyle = '#888';
@@ -743,7 +782,7 @@ function drawOpponentSelect() {
 
   ctx.fillStyle = '#ccc';
   ctx.font = '13px system-ui, sans-serif';
-  ctx.fillText('Click an opponent or Random  •  1–6  •  R to go back', W / 2, 380);
+  ctx.fillText('Click an opponent or Random  •  1–7  •  R to go back', W / 2, 380);
   drawChosenBadge();
   ctx.textAlign = 'left';
 }

@@ -3,7 +3,7 @@
 //  Nameless one  — green body, gray lens, shoots spinning triangles
 //  Ember         — black body, fire on the head, shoots fireballs
 //  Corupted Cape — purple body, witch hat + red cape, throws damaging potions
-const CHAR_KEYS = ['Blue', 'Green', 'Fire', 'Cape', 'Storm', 'Mike'];
+const CHAR_KEYS = ['Blue', 'Green', 'Fire', 'Cape', 'Storm', 'Mike', 'Slim'];
 const CHARACTERS = {
   Blue:  { name: 'Blue',          body: '#55555c', visor: '#1a3a8a', tongue: '#1448e0', accent: '#3a6ff0', attack: 'melee' },
   Green: { name: 'Nameless one',  body: '#3aa83a', visor: '#55555c', tongue: '#1448e0', accent: '#3aa83a', attack: 'triangle' },
@@ -11,6 +11,7 @@ const CHARACTERS = {
   Cape:  { name: 'Corupted Cape', body: '#5a2db5', visor: '#55555c', tongue: '#8a4cff', accent: '#8a4cff', attack: 'potion', hat: true, cape: true },
   Storm: { name: 'Storm',         body: '#ffd23a', visor: '#1a3a8a', tongue: '#1f6fff', accent: '#ffd23a', attack: 'melee', storm: true, dmg: 8, power: 'Lightning' },
   Mike:  { name: 'Mike',          body: '#c0202a', visor: '#ffcf33', tongue: '#c01818', accent: '#e23b3b', attack: 'melee', boxer: true, power: 'Punch', dmg: 7 },
+  Slim:  { name: 'Slim',          body: '#aacc2a', visor: '#aacc2a', tongue: '#aacc2a', accent: '#aacc2a', attack: 'slime', slime: true, power: 'Slime balls' },
 };
 
 function makeFighter(x, y, facing, charKey, combat) {
@@ -22,11 +23,12 @@ function makeFighter(x, y, facing, charKey, combat) {
     bodyColor: c.body, visorColor: c.visor, tongueColor: c.tongue, accent: c.accent,
     attack: c.attack,
     // ranged fighters shoot projectiles from afar; melee/potion fighters chase
-    ranged: c.attack === 'triangle' || c.attack === 'fireball',
+    ranged: c.attack === 'triangle' || c.attack === 'fireball' || c.attack === 'slime',
     hat: c.hat || false,              // witch hat (Corupted Cape)
     cape: c.cape || false,            // red cape (Corupted Cape)
     storm: c.storm || false,          // lightning tongue + ground strike on jump (Storm)
     boxer: c.boxer || false,          // red gloves + jabbing punch (Mike)
+    slime: c.slime || false,          // Minecraft-style slime cube that lobs slime balls (Slim)
     hp: 100, maxHp: 100,
     attackTimer: 0,      // >0 while a lash animation is active
     cooldown: 0,         // frames until next melee attack allowed
