@@ -102,6 +102,81 @@ function drawPlatform(p) {
   drawTriangleRock(p);
 }
 
+// Mike: a little human boxer (skin head + hair, red/yellow kit, gloves, shoes).
+// Drawn in the same transformed space as a crewmate (origin = top centre,
+// already flipped to face travel; +x is forward).
+function drawBoxer(f, step, hurtFlash) {
+  const skin   = hurtFlash ? '#ffffff' : '#e8a060';
+  const jersey = hurtFlash ? '#ffffff' : '#c0202a';
+  const trim   = hurtFlash ? '#ffffff' : '#ffcf33';
+  const glove  = hurtFlash ? '#ffffff' : '#c01818';
+  const hair   = hurtFlash ? '#dddddd' : '#2b2b2b';
+  const shoe   = hurtFlash ? '#ffffff' : '#3a2a1a';
+
+  const attacking = f.attackTimer > 0;
+  const ext = attacking ? (ATTACK_REACH * Math.sin((1 - f.attackTimer / ATTACK_ACTIVE) * Math.PI)) : 0;
+
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  // legs (tan) + shoes, with a little walk shuffle
+  ctx.strokeStyle = skin; ctx.lineWidth = 6;
+  ctx.beginPath(); ctx.moveTo(-5, 40); ctx.lineTo(-6, 46 + step); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(5, 40);  ctx.lineTo(6, 46 - step); ctx.stroke();
+  ctx.fillStyle = shoe;
+  ctx.beginPath(); ctx.ellipse(-7, 47 + step, 5, 2.6, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(8, 47 - step, 5, 2.6, 0, 0, Math.PI * 2); ctx.fill();
+
+  // rear arm tucked by the hip
+  ctx.strokeStyle = skin; ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.moveTo(-7, 20); ctx.lineTo(-13, 28); ctx.stroke();
+  ctx.fillStyle = glove;
+  ctx.beginPath(); ctx.arc(-15, 30, 4.5, 0, Math.PI * 2); ctx.fill();
+
+  // shorts (red with yellow trim)
+  ctx.fillStyle = jersey; roundRect(-9, 31, 18, 10, 3); ctx.fill();
+  ctx.strokeStyle = trim; ctx.lineWidth = 2; roundRect(-9, 31, 18, 10, 3); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, 33); ctx.lineTo(0, 41); ctx.stroke();   // leg split
+
+  // jersey (red with yellow trim + short sleeves) and a little number mark
+  ctx.fillStyle = jersey; roundRect(-10, 17, 20, 16, 4); ctx.fill();
+  ctx.strokeStyle = trim; ctx.lineWidth = 2; roundRect(-10, 17, 20, 16, 4); ctx.stroke();
+  ctx.fillStyle = trim;
+  roundRect(-13, 17, 5, 7, 2); ctx.fill();   // rear sleeve
+  roundRect(8, 17, 5, 7, 2); ctx.fill();     // front sleeve
+  roundRect(-3, 22, 3, 7, 1); ctx.fill();    // "1"
+  ctx.beginPath(); ctx.arc(4, 25, 3.2, 0, Math.PI * 2); ctx.fill();   // "0"
+  ctx.fillStyle = jersey; ctx.beginPath(); ctx.arc(4, 25, 1.4, 0, Math.PI * 2); ctx.fill();
+
+  // front arm + glove — jabs forward when attacking
+  const reach = 9 + ext;
+  ctx.strokeStyle = skin; ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.moveTo(7, 20); ctx.lineTo(reach, 24); ctx.stroke();
+  ctx.fillStyle = glove;
+  ctx.beginPath(); ctx.arc(reach + 3, 24, 6, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#7a0e0e'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(reach + 3, 24, 6, 0, Math.PI * 2); ctx.stroke();
+
+  // neck + head
+  ctx.fillStyle = skin;
+  ctx.fillRect(-2, 14, 4, 5);
+  ctx.beginPath(); ctx.arc(0, 9, 8, 0, Math.PI * 2); ctx.fill();
+
+  // hair: dark crown + a few messy spikes
+  ctx.fillStyle = hair;
+  ctx.beginPath(); ctx.arc(0, 9, 8, Math.PI * 1.12, Math.PI * 1.88); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = hair; ctx.lineWidth = 1.6;
+  for (let i = -3; i <= 3; i++) {
+    ctx.beginPath(); ctx.moveTo(i * 2.2, 4.5); ctx.lineTo(i * 2.2 + 1.4, 0); ctx.stroke();
+  }
+
+  // happy face: closed eyes + smile
+  ctx.strokeStyle = '#5a3a1a'; ctx.lineWidth = 1.4;
+  ctx.beginPath(); ctx.arc(-3, 8, 1.7, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
+  ctx.beginPath(); ctx.arc(3, 8, 1.7, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
+  ctx.beginPath(); ctx.arc(0, 9, 3.6, 0.12 * Math.PI, 0.88 * Math.PI); ctx.stroke();
+}
+
 // Among-Us-style crewmate with per-character flourishes (hat, cape, fire, etc).
 function drawCrewmate(f) {
   const x = f.x, y = f.y, dir = f.facing;
@@ -128,6 +203,13 @@ function drawCrewmate(f) {
   const shade = hurtFlash ? '#dddddd' : shadeColor(f.bodyColor, -22);
 
   const BW = 22, halfW = BW / 2, bodyTop = 2, bodyBot = 40;
+
+  // Mike is a little human boxer, not a crewmate — drawn entirely separately.
+  if (f.boxer) {
+    drawBoxer(f, step, hurtFlash);
+    ctx.restore();
+    return;
+  }
 
   // legs
   ctx.fillStyle = shade;
@@ -175,11 +257,6 @@ function drawCrewmate(f) {
   roundRect(-halfW, bodyTop, BW, bodyBot - bodyTop, 11); ctx.fill();
   ctx.fillStyle = shade;
   roundRect(-halfW, bodyTop, 6, bodyBot - bodyTop, 6); ctx.fill();
-  if (f.boxer) {   // yellow trim (Mike's kit)
-    ctx.strokeStyle = '#ffcf33';
-    ctx.lineWidth = 2.5;
-    roundRect(-halfW, bodyTop, BW, bodyBot - bodyTop, 11); ctx.stroke();
-  }
 
   // visor / lens (no glint dot)
   ctx.fillStyle = f.visorColor;
@@ -235,53 +312,42 @@ function drawCrewmate(f) {
     const attacking = f.attackTimer > 0;
     const ext = attacking ? (ATTACK_REACH * Math.sin((1 - f.attackTimer / ATTACK_ACTIVE) * Math.PI)) : 0;
 
-    if (f.boxer) {
-      // Mike: red boxing gloves; the front fist jabs forward when attacking.
-      ctx.fillStyle = '#c01818';
-      ctx.beginPath(); ctx.arc(-13, 30, 4.5, 0, Math.PI * 2); ctx.fill();   // rear glove
-      const reach = 12 + ext;
-      ctx.strokeStyle = '#e8923a'; ctx.lineWidth = 4; ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(4, 24); ctx.lineTo(reach, 28); ctx.stroke();   // arm
-      ctx.fillStyle = '#c01818';
-      ctx.beginPath(); ctx.arc(reach + 2, 28, 6, 0, Math.PI * 2); ctx.fill();     // front glove
-      ctx.strokeStyle = '#7a0e0e'; ctx.lineWidth = 1.5; ctx.stroke();
-    } else {
-      // mouth sits slightly right of centre but stays inside the body (±11 wide)
-      ctx.fillStyle = '#2b2b30';
-      roundRect(-5, 24, 14, 11, 3); ctx.fill();
-      ctx.fillStyle = '#ffffff';
-      for (let i = 0; i < 3; i++) {
-        const tx = -5 + i * 5;
-        ctx.beginPath(); ctx.moveTo(tx, 24); ctx.lineTo(tx + 4, 24); ctx.lineTo(tx + 2, 29); ctx.closePath(); ctx.fill();
-        ctx.beginPath(); ctx.moveTo(tx, 35); ctx.lineTo(tx + 4, 35); ctx.lineTo(tx + 2, 30); ctx.closePath(); ctx.fill();
-      }
-      if (f.storm) {
-        // a blue lightning bolt — only visible while attacking, sharp zig-zag,
-        // no glow. Stays hidden when idle. Emerges from the mouth.
-        if (attacking) {
-          const len = 20 + ext;
-          ctx.lineCap = 'round';
-          ctx.lineJoin = 'miter';
-          ctx.beginPath();
-          ctx.moveTo(9, 30);
-          ctx.lineTo(9 + len * 0.32, 23);
-          ctx.lineTo(9 + len * 0.5, 32);
-          ctx.lineTo(9 + len * 0.74, 25);
-          ctx.lineTo(9 + len, 31);
-          ctx.strokeStyle = '#1f6fff'; ctx.lineWidth = 3; ctx.stroke();
-          ctx.strokeStyle = '#bfe0ff'; ctx.lineWidth = 1; ctx.stroke();
-        }
-      } else {
-        const lash = Math.sin(frame * 0.15) * 3;
-        ctx.strokeStyle = f.tongueColor;
-        ctx.lineWidth = 5;
+    // mouth sits slightly right of centre but stays inside the body (±11 wide)
+    ctx.fillStyle = '#2b2b30';
+    roundRect(-5, 24, 14, 11, 3); ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    for (let i = 0; i < 3; i++) {
+      const tx = -5 + i * 5;
+      ctx.beginPath(); ctx.moveTo(tx, 24); ctx.lineTo(tx + 4, 24); ctx.lineTo(tx + 2, 29); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(tx, 35); ctx.lineTo(tx + 4, 35); ctx.lineTo(tx + 2, 30); ctx.closePath(); ctx.fill();
+    }
+
+    if (f.storm) {
+      // a blue lightning bolt — only visible while attacking, sharp zig-zag,
+      // no glow. Stays hidden when idle. Emerges from the mouth.
+      if (attacking) {
+        const len = 20 + ext;
         ctx.lineCap = 'round';
+        ctx.lineJoin = 'miter';
         ctx.beginPath();
         ctx.moveTo(9, 30);
-        ctx.quadraticCurveTo(20 + ext * 0.6, 22 + lash, 16 + ext, 30);
-        if (!attacking) ctx.quadraticCurveTo(28, 38 - lash, 23, 26); // little curl when idle
-        ctx.stroke();
+        ctx.lineTo(9 + len * 0.32, 23);
+        ctx.lineTo(9 + len * 0.5, 32);
+        ctx.lineTo(9 + len * 0.74, 25);
+        ctx.lineTo(9 + len, 31);
+        ctx.strokeStyle = '#1f6fff'; ctx.lineWidth = 3; ctx.stroke();
+        ctx.strokeStyle = '#bfe0ff'; ctx.lineWidth = 1; ctx.stroke();
       }
+    } else {
+      const lash = Math.sin(frame * 0.15) * 3;
+      ctx.strokeStyle = f.tongueColor;
+      ctx.lineWidth = 5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(9, 30);
+      ctx.quadraticCurveTo(20 + ext * 0.6, 22 + lash, 16 + ext, 30);
+      if (!attacking) ctx.quadraticCurveTo(28, 38 - lash, 23, 26); // little curl when idle
+      ctx.stroke();
     }
   }
 
