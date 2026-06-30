@@ -52,11 +52,12 @@ function setControlScheme(id) { controlScheme = id; updateHint(); }
 
 // Menu layout: character cards first, then difficulty buttons.
 const CHAR_OPTIONS = [
-  { key: 'Blue',  x: 47,  y: 168, w: 130, h: 132 },
-  { key: 'Green', x: 191, y: 168, w: 130, h: 132 },
-  { key: 'Fire',  x: 335, y: 168, w: 130, h: 132 },
-  { key: 'Cape',  x: 479, y: 168, w: 130, h: 132 },
-  { key: 'Storm', x: 623, y: 168, w: 130, h: 132 },
+  { key: 'Blue',  x: 27,  y: 168, w: 116, h: 132 },
+  { key: 'Green', x: 153, y: 168, w: 116, h: 132 },
+  { key: 'Fire',  x: 279, y: 168, w: 116, h: 132 },
+  { key: 'Cape',  x: 405, y: 168, w: 116, h: 132 },
+  { key: 'Storm', x: 531, y: 168, w: 116, h: 132 },
+  { key: 'Mike',  x: 657, y: 168, w: 116, h: 132 },
 ];
 const DIFF_OPTIONS = [
   { name: 'Easy',   x: 155, y: 215, w: 150, h: 72, color: '#3aa83a' },

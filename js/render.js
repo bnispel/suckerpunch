@@ -175,6 +175,11 @@ function drawCrewmate(f) {
   roundRect(-halfW, bodyTop, BW, bodyBot - bodyTop, 11); ctx.fill();
   ctx.fillStyle = shade;
   roundRect(-halfW, bodyTop, 6, bodyBot - bodyTop, 6); ctx.fill();
+  if (f.boxer) {   // yellow trim (Mike's kit)
+    ctx.strokeStyle = '#ffcf33';
+    ctx.lineWidth = 2.5;
+    roundRect(-halfW, bodyTop, BW, bodyBot - bodyTop, 11); ctx.stroke();
+  }
 
   // visor / lens (no glint dot)
   ctx.fillStyle = f.visorColor;
@@ -227,44 +232,56 @@ function drawCrewmate(f) {
 
   // jagged mouth + lashing tongue — only the melee fighter has these.
   if (f.attack === 'melee') {
-    // mouth sits slightly right of centre but stays inside the body (±11 wide)
-    ctx.fillStyle = '#2b2b30';
-    roundRect(-5, 24, 14, 11, 3); ctx.fill();
-    ctx.fillStyle = '#ffffff';
-    for (let i = 0; i < 3; i++) {
-      const tx = -5 + i * 5;
-      ctx.beginPath(); ctx.moveTo(tx, 24); ctx.lineTo(tx + 4, 24); ctx.lineTo(tx + 2, 29); ctx.closePath(); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(tx, 35); ctx.lineTo(tx + 4, 35); ctx.lineTo(tx + 2, 30); ctx.closePath(); ctx.fill();
-    }
-
     const attacking = f.attackTimer > 0;
     const ext = attacking ? (ATTACK_REACH * Math.sin((1 - f.attackTimer / ATTACK_ACTIVE) * Math.PI)) : 0;
-    if (f.storm) {
-      // a blue lightning bolt — only visible while attacking, sharp zig-zag,
-      // no glow. Stays hidden when idle. Emerges from the mouth.
-      if (attacking) {
-        const len = 20 + ext;
+
+    if (f.boxer) {
+      // Mike: red boxing gloves; the front fist jabs forward when attacking.
+      ctx.fillStyle = '#c01818';
+      ctx.beginPath(); ctx.arc(-13, 30, 4.5, 0, Math.PI * 2); ctx.fill();   // rear glove
+      const reach = 12 + ext;
+      ctx.strokeStyle = '#e8923a'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(4, 24); ctx.lineTo(reach, 28); ctx.stroke();   // arm
+      ctx.fillStyle = '#c01818';
+      ctx.beginPath(); ctx.arc(reach + 2, 28, 6, 0, Math.PI * 2); ctx.fill();     // front glove
+      ctx.strokeStyle = '#7a0e0e'; ctx.lineWidth = 1.5; ctx.stroke();
+    } else {
+      // mouth sits slightly right of centre but stays inside the body (±11 wide)
+      ctx.fillStyle = '#2b2b30';
+      roundRect(-5, 24, 14, 11, 3); ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      for (let i = 0; i < 3; i++) {
+        const tx = -5 + i * 5;
+        ctx.beginPath(); ctx.moveTo(tx, 24); ctx.lineTo(tx + 4, 24); ctx.lineTo(tx + 2, 29); ctx.closePath(); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(tx, 35); ctx.lineTo(tx + 4, 35); ctx.lineTo(tx + 2, 30); ctx.closePath(); ctx.fill();
+      }
+      if (f.storm) {
+        // a blue lightning bolt — only visible while attacking, sharp zig-zag,
+        // no glow. Stays hidden when idle. Emerges from the mouth.
+        if (attacking) {
+          const len = 20 + ext;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'miter';
+          ctx.beginPath();
+          ctx.moveTo(9, 30);
+          ctx.lineTo(9 + len * 0.32, 23);
+          ctx.lineTo(9 + len * 0.5, 32);
+          ctx.lineTo(9 + len * 0.74, 25);
+          ctx.lineTo(9 + len, 31);
+          ctx.strokeStyle = '#1f6fff'; ctx.lineWidth = 3; ctx.stroke();
+          ctx.strokeStyle = '#bfe0ff'; ctx.lineWidth = 1; ctx.stroke();
+        }
+      } else {
+        const lash = Math.sin(frame * 0.15) * 3;
+        ctx.strokeStyle = f.tongueColor;
+        ctx.lineWidth = 5;
         ctx.lineCap = 'round';
-        ctx.lineJoin = 'miter';
         ctx.beginPath();
         ctx.moveTo(9, 30);
-        ctx.lineTo(9 + len * 0.32, 23);
-        ctx.lineTo(9 + len * 0.5, 32);
-        ctx.lineTo(9 + len * 0.74, 25);
-        ctx.lineTo(9 + len, 31);
-        ctx.strokeStyle = '#1f6fff'; ctx.lineWidth = 3; ctx.stroke();
-        ctx.strokeStyle = '#bfe0ff'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.quadraticCurveTo(20 + ext * 0.6, 22 + lash, 16 + ext, 30);
+        if (!attacking) ctx.quadraticCurveTo(28, 38 - lash, 23, 26); // little curl when idle
+        ctx.stroke();
       }
-    } else {
-      const lash = Math.sin(frame * 0.15) * 3;
-      ctx.strokeStyle = f.tongueColor;
-      ctx.lineWidth = 5;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(9, 30);
-      ctx.quadraticCurveTo(20 + ext * 0.6, 22 + lash, 16 + ext, 30);
-      if (!attacking) ctx.quadraticCurveTo(28, 38 - lash, 23, 26); // little curl when idle
-      ctx.stroke();
     }
   }
 
@@ -579,10 +596,10 @@ function drawCharCard(opt, disabled) {
   drawCrewmate(previews[opt.key]);
 
   ctx.fillStyle = '#fff';
-  ctx.font = 'bold 16px system-ui, sans-serif';
+  ctx.font = 'bold 13px system-ui, sans-serif';
   ctx.fillText(c.name, opt.x + opt.w / 2, opt.y + opt.h - 34);
   ctx.fillStyle = '#bbb';
-  ctx.font = '12px system-ui, sans-serif';
+  ctx.font = '11px system-ui, sans-serif';
   ctx.fillText(c.power || ATTACK_LABEL[c.attack], opt.x + opt.w / 2, opt.y + opt.h - 14);
   ctx.restore();
 
@@ -621,7 +638,7 @@ function drawCharSelect() {
 
   ctx.fillStyle = '#ccc';
   ctx.font = '13px system-ui, sans-serif';
-  ctx.fillText('Click a character  •  or press 1 / 2 / 3 / 4 / 5', W / 2, 380);
+  ctx.fillText('Click a character  •  or press 1 – 6', W / 2, 380);
 
   ctx.textAlign = 'right';
   ctx.fillStyle = '#888';
@@ -652,7 +669,7 @@ function drawOpponentSelect() {
 
   ctx.fillStyle = '#ccc';
   ctx.font = '13px system-ui, sans-serif';
-  ctx.fillText('Click an opponent or Random  •  1–5  •  R to go back', W / 2, 380);
+  ctx.fillText('Click an opponent or Random  •  1–6  •  R to go back', W / 2, 380);
   drawChosenBadge();
   ctx.textAlign = 'left';
 }
