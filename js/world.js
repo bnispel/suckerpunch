@@ -30,32 +30,58 @@ function platformCracks(p) {
   }
 }
 
-// Generate a fresh, random set of platforms. They're kept apart so they don't
-// pile up, and confined to the air above the lava.
+// Roughly how far a fighter can jump (a bit under the true maximum so jumps
+// are comfortable, not pixel-perfect).
+const JUMP_H = 100;     // vertical reach
+const REACH_X = 110;    // horizontal reach at the same height
+const MIN_GAP = 22;     // platforms must be at least this far apart (never touch)
+
+// Can you jump between rocks a and b? Less horizontal room the higher the hop.
+function reachable(a, b) {
+  const gapX = Math.max(0, Math.max(a.x, b.x) - Math.min(a.x + a.w, b.x + b.w));
+  const rise = Math.abs(a.y - b.y);
+  if (rise > JUMP_H) return false;
+  return gapX <= REACH_X * (1 - 0.7 * rise / JUMP_H);
+}
+
+// Does cand come within MIN_GAP of any existing platform (i.e. touch)?
+function touchesAny(cand) {
+  for (const p of platforms) {
+    if (cand.x < p.x + p.w + MIN_GAP && cand.x + cand.w + MIN_GAP > p.x &&
+        cand.y < p.y + p.h + MIN_GAP && cand.y + cand.h + MIN_GAP > p.y) return true;
+  }
+  return false;
+}
+
+// Generate a fresh, random set of platforms that never touch and are all
+// reachable by jumping (each new rock grows off an existing one).
 function buildArena() {
-  platforms = [];
   const count = 4 + Math.floor(Math.random() * 4);   // 4–7 rocks
   const topY = 120, botY = LAVA_Y - 70;
+
+  // root rock, lower-middle-ish
+  const rw = 110 + Math.floor(Math.random() * 60);
+  const root = {
+    x: Math.max(14, Math.min(W - 14 - rw, Math.round((W - rw) / 2 + (Math.random() * 200 - 100)))),
+    y: botY - Math.floor(Math.random() * 60), w: rw, h: 14,
+  };
+  platformCracks(root);
+  platforms = [root];
+
   let tries = 0;
-  while (platforms.length < count && tries < 400) {
+  while (platforms.length < count && tries < 600) {
     tries++;
+    const base = platforms[Math.floor(Math.random() * platforms.length)];
     const w = 100 + Math.floor(Math.random() * 70);
-    const x = 16 + Math.floor(Math.random() * (W - 32 - w));
-    const y = topY + Math.floor(Math.random() * (botY - topY));
-    // reject if it sits too close to an existing rock on a similar level
-    let ok = true;
-    for (const p of platforms) {
-      if (Math.abs(p.y - y) < 42 && x < p.x + p.w + 26 && x + w > p.x - 26) { ok = false; break; }
-    }
-    if (!ok) continue;
-    const p = { x, y, w, h: 14 };
-    platformCracks(p);
-    platforms.push(p);
-  }
-  // safety net so there's always somewhere to spawn
-  if (platforms.length < 2) {
-    platforms = [{ x: 60, y: 380, w: 140, h: 14 }, { x: 600, y: 380, w: 140, h: 14 }];
-    platforms.forEach(platformCracks);
+    const side = Math.random() < 0.5 ? -1 : 1;
+    const gapX = MIN_GAP + 4 + Math.random() * (REACH_X - MIN_GAP - 6);
+    const x = Math.round(side > 0 ? base.x + base.w + gapX : base.x - gapX - w);
+    const y = Math.round(base.y + (Math.random() * 2 - 1) * JUMP_H);
+    if (x < 14 || x + w > W - 14 || y < topY || y > botY) continue;
+    const cand = { x, y, w, h: 14 };
+    if (!reachable(base, cand) || touchesAny(cand)) continue;
+    platformCracks(cand);
+    platforms.push(cand);
   }
 }
 
