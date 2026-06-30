@@ -56,6 +56,8 @@ function updateProjectiles() {
       target.vx = Math.sign(pr.vx) * 4;
       target.vy = -3;
       pr.dead = true;
+      // slime balls splatter on impact
+      if (pr.kind === 'slime') explosions.push({ x: pr.x, y: pr.y, life: EXPLOSION_LIFE, slime: true });
     }
     if (pr.x < -20 || pr.x > W + 20) pr.dead = true;
   }

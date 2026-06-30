@@ -573,19 +573,33 @@ function drawBolts() {
   }
 }
 
-// Little burst where two opposing projectiles collided.
+// Little burst where projectiles land: a green splat for slime balls, an
+// orange burst for opposing-shot collisions.
 function drawExplosions() {
   for (const ex of explosions) {
     const k = 1 - ex.life / EXPLOSION_LIFE;   // 0 -> 1 over its life
-    const r = 4 + k * 16;
     ctx.save();
     ctx.globalAlpha = Math.max(0, ex.life / EXPLOSION_LIFE);
-    ctx.strokeStyle = '#ffd24a'; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.arc(ex.x, ex.y, r, 0, Math.PI * 2); ctx.stroke();
-    ctx.fillStyle = '#ff7a18';
-    ctx.beginPath(); ctx.arc(ex.x, ex.y, Math.max(0, r * 0.5), 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#fff3b0';
-    ctx.beginPath(); ctx.arc(ex.x, ex.y, Math.max(0, r * 0.22), 0, Math.PI * 2); ctx.fill();
+    if (ex.slime) {
+      const R = 3 + k * 15;
+      ctx.fillStyle = '#aacc2a';
+      ctx.beginPath(); ctx.arc(ex.x, ex.y, Math.max(0, 6 - k * 4), 0, Math.PI * 2); ctx.fill();
+      for (let i = 0; i < 7; i++) {                 // droplets flying outward
+        const a = (i / 7) * Math.PI * 2 + ex.x;
+        const dr = 3 - k * 2;
+        ctx.beginPath();
+        ctx.arc(ex.x + Math.cos(a) * R, ex.y + Math.sin(a) * R, Math.max(0.5, dr), 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else {
+      const r = 4 + k * 16;
+      ctx.strokeStyle = '#ffd24a'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(ex.x, ex.y, r, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = '#ff7a18';
+      ctx.beginPath(); ctx.arc(ex.x, ex.y, Math.max(0, r * 0.5), 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fff3b0';
+      ctx.beginPath(); ctx.arc(ex.x, ex.y, Math.max(0, r * 0.22), 0, Math.PI * 2); ctx.fill();
+    }
     ctx.restore();
   }
 }

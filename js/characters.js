@@ -11,7 +11,7 @@ const CHARACTERS = {
   Cape:  { name: 'Corupted Cape', body: '#5a2db5', visor: '#55555c', tongue: '#8a4cff', accent: '#8a4cff', attack: 'potion', hat: true, cape: true },
   Storm: { name: 'Storm',         body: '#ffd23a', visor: '#1a3a8a', tongue: '#1f6fff', accent: '#ffd23a', attack: 'melee', storm: true, dmg: 8, power: 'Lightning' },
   Mike:  { name: 'Mike',          body: '#c0202a', visor: '#ffcf33', tongue: '#c01818', accent: '#e23b3b', attack: 'melee', boxer: true, power: 'Punch', dmg: 7 },
-  Slim:  { name: 'Slim',          body: '#aacc2a', visor: '#aacc2a', tongue: '#aacc2a', accent: '#aacc2a', attack: 'slime', slime: true, power: 'Slime balls' },
+  Slim:  { name: 'Slime',         body: '#aacc2a', visor: '#aacc2a', tongue: '#aacc2a', accent: '#aacc2a', attack: 'slime', slime: true, power: 'Slime balls' },
 };
 
 function makeFighter(x, y, facing, charKey, combat) {
