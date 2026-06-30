@@ -10,7 +10,7 @@ const CHARACTERS = {
   Fire:  { name: 'Ember',         body: '#1a1a1a', visor: '#55555c', tongue: '#ff6a18', accent: '#ff6a18', attack: 'fireball' },
   Cape:  { name: 'Corupted Cape', body: '#5a2db5', visor: '#55555c', tongue: '#8a4cff', accent: '#8a4cff', attack: 'potion', hat: true, cape: true },
   Storm: { name: 'Storm',         body: '#ffd23a', visor: '#1a3a8a', tongue: '#1f6fff', accent: '#ffd23a', attack: 'melee', storm: true, dmg: 8, power: 'Lightning' },
-  Mike:  { name: 'Mike',          body: '#c0202a', visor: '#ffcf33', tongue: '#c01818', accent: '#e23b3b', attack: 'melee', boxer: true, power: 'Punch' },
+  Mike:  { name: 'Mike',          body: '#c0202a', visor: '#ffcf33', tongue: '#c01818', accent: '#e23b3b', attack: 'melee', boxer: true, power: 'Punch', dmg: 7 },
 };
 
 function makeFighter(x, y, facing, charKey, combat) {
