@@ -44,11 +44,15 @@ function reachable(a, b) {
   return gapX <= REACH_X * (1 - 0.7 * rise / JUMP_H);
 }
 
-// Does cand come within MIN_GAP of any existing platform (i.e. touch)?
+// Does cand come within MIN_GAP of any existing platform (i.e. touch)? Uses the
+// full triangle footprint (top down to the hanging point), not just the rect,
+// so the visible rocks never overlap.
 function touchesAny(cand) {
+  const cd = platformDepth(cand);
   for (const p of platforms) {
+    const pd = platformDepth(p);
     if (cand.x < p.x + p.w + MIN_GAP && cand.x + cand.w + MIN_GAP > p.x &&
-        cand.y < p.y + p.h + MIN_GAP && cand.y + cand.h + MIN_GAP > p.y) return true;
+        cand.y < p.y + pd + MIN_GAP && cand.y + cd + MIN_GAP > p.y) return true;
   }
   return false;
 }

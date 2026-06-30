@@ -23,7 +23,7 @@ function drawBackground() {
 function drawTriangleRock(p) {
   const left = p.x, right = p.x + p.w, top = p.y;
   const apexX = p.x + p.w / 2;
-  const apexY = p.y + Math.max(p.w * 0.55, 60); // point hangs below the surface
+  const apexY = p.y + platformDepth(p); // point hangs below the surface
 
   // rock body
   ctx.beginPath();

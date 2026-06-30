@@ -44,6 +44,12 @@ const CONTROL_SCHEMES = {
   },
 };
 
+// How far a platform's triangle hangs below its flat top (used by both the
+// renderer and the no-touch spacing check so they agree).
+function platformDepth(p) {
+  return Math.min(p.w * 0.5, 46);
+}
+
 // ---- shared helpers ----
 function rectsOverlap(a, b) {
   return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
