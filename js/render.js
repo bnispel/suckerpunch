@@ -102,6 +102,20 @@ function drawPlatform(p) {
   drawTriangleRock(p);
 }
 
+// Temporary slime puddles left where Slime jumped (fade out near the end).
+function drawPuddles() {
+  for (const pd of puddles) {
+    const a = Math.min(1, pd.life / 30);
+    ctx.save();
+    ctx.globalAlpha = 0.5 * a;
+    ctx.fillStyle = '#aacc2a';
+    ctx.beginPath(); ctx.ellipse(pd.x, pd.y - 1, 16, 4.5, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 0.75 * a;
+    ctx.strokeStyle = '#7fa01e'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.restore();
+  }
+}
+
 // Slim: a Minecraft-style slime cube (jiggly square, inner cube, blocky face).
 function drawSlime(f, hurtFlash) {
   const body  = hurtFlash ? '#ffffff' : '#aacc2a';
@@ -658,6 +672,7 @@ function draw() {
 
   drawLava();
   for (const p of platforms) drawPlatform(p);
+  drawPuddles();
   drawPotions();
   drawBolts();
   drawProjectiles();

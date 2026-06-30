@@ -105,6 +105,18 @@ function maybeStormBolt(f, wasOnGround) {
   if (f.storm && wasOnGround && !f.inLava && f.vy < 0) spawnStormBolt(f);
 }
 
+// Slime drops a temporary puddle on the ground each time it jumps off it.
+function maybeSlimePuddle(f, wasOnGround) {
+  if (f.slime && wasOnGround && !f.inLava && f.vy < 0) {
+    puddles.push({ x: f.x + f.w / 2, y: f.y + f.h, life: PUDDLE_LIFE });
+  }
+}
+
+function updatePuddles() {
+  for (const pd of puddles) pd.life--;
+  puddles = puddles.filter(pd => pd.life > 0);
+}
+
 function updateBolts() {
   for (const b of bolts) {
     b.life--;

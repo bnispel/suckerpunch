@@ -1,5 +1,5 @@
 // Match state, menus, and the routines that start a game.
-let player, enemy, winner, aiTimer, projectiles, potions, bolts, explosions;
+let player, enemy, winner, aiTimer, projectiles, potions, bolts, explosions, puddles;
 let gameState = 'charSelect';   // 'charSelect' | 'difficulty' | 'playing' | 'dying' | 'over'
 let playerCharKey = 'Blue';
 let difficultyName = 'Medium';
@@ -90,6 +90,7 @@ function startGame(diffName) {
   potions = [];
   bolts = [];
   explosions = [];
+  puddles = [];
   winner = null;
   aiTimer = 0;
   clearTouch();
@@ -106,6 +107,7 @@ function restartMatch() {
   potions = [];
   bolts = [];
   explosions = [];
+  puddles = [];
   winner = null;
   aiTimer = 0;
   clearTouch();
@@ -122,4 +124,5 @@ projectiles = [];
 potions = [];
 bolts = [];
 explosions = [];
+puddles = [];
 updateHint();   // show the default scheme's controls under the canvas

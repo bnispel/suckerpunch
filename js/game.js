@@ -7,9 +7,11 @@ function update() {
   updatePlayer();
   updateAI();
 
-  // Storm strikes the ground it just leapt off of
+  // Storm strikes the ground it just leapt off of; Slime leaves a puddle
   maybeStormBolt(player, pGround);
   maybeStormBolt(enemy, eGround);
+  maybeSlimePuddle(player, pGround);
+  maybeSlimePuddle(enemy, eGround);
 
   applyPhysics(player);
   applyPhysics(enemy);
@@ -20,6 +22,7 @@ function update() {
   updateExplosions();
   updatePotions();
   updateBolts();
+  updatePuddles();
 
   updateLavaDamage(player);
   updateLavaDamage(enemy);
