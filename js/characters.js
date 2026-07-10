@@ -48,6 +48,7 @@ function makeFighter(x, y, facing, charKey, combat) {
     lavaTick: 0,                      // counts frames of lava contact
     moveDir: 0,                       // AI's current independent move intent
     wantJump: false,                  // AI queued a jump
+    blinkPhase: Math.floor(Math.random() * 240),  // desync each character's blink
   };
 }
 

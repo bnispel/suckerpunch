@@ -1,6 +1,13 @@
 // All drawing: background, lava, rocks, crewmates, projectiles, potions, UI.
 const ATTACK_LABEL = { melee: 'Tongue lash', triangle: 'Triangle shot', fireball: 'Fireball', potion: 'Potion splash', slime: 'Slime balls' };
 
+// Eyes stay open most of the time, snapping shut for a few frames each cycle.
+// ~230-frame period ≈ every 4s; per-character blinkPhase keeps them out of sync.
+function isBlinking(f) {
+  const t = ((frame + (f && f.blinkPhase || 0)) % 230);
+  return t < 6;
+}
+
 function drawBackground() {
   // reddish lava-planet sky
   const g = ctx.createLinearGradient(0, 0, 0, H);
@@ -133,11 +140,27 @@ function drawSlime(f, hurtFlash) {
   ctx.strokeStyle = out; ctx.lineWidth = 2; roundRect(-13, 16, 26, 30, 4); ctx.stroke();
   // inner cube
   ctx.fillStyle = inner; roundRect(-7, 21, 13, 13, 3); ctx.fill();
-  // blocky face: two eyes + mouth
+  // blocky face: two vertical-rectangle eyes + mouth
   ctx.fillStyle = face;
-  ctx.fillRect(-8, 25, 5, 5);
-  ctx.fillRect(3, 24, 5, 5);
+  if (isBlinking(f)) {
+    ctx.fillRect(-7, 29, 3, 1.4);
+    ctx.fillRect(4, 28, 3, 1.4);
+  } else {
+    ctx.fillRect(-7, 24, 3, 7);
+    ctx.fillRect(4, 23, 3, 7);
+    // hint of an eyelid across the top of each eye
+    ctx.fillStyle = inner;
+    ctx.fillRect(-7, 24, 3, 2);
+    ctx.fillRect(4, 23, 3, 2);
+    ctx.fillStyle = face;
+  }
   ctx.fillRect(-2, 37, 5, 4);
+  // slightly angry brows — angled down toward the centre
+  ctx.strokeStyle = face; ctx.lineWidth = 1.4; ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-7, 22); ctx.lineTo(-4, 23.5);
+  ctx.moveTo(7, 21); ctx.lineTo(4, 22.5);
+  ctx.stroke();
 
   ctx.restore();
 }
@@ -212,13 +235,29 @@ function drawBoxer(f, step, hurtFlash) {
   ctx.lineTo(-4, 8); ctx.lineTo(-7, 11); ctx.lineTo(-9, 8.5);
   ctx.closePath(); ctx.fill(); ink(1.5);
 
-  // face: big eyes + pupils, nose, smile
-  ctx.fillStyle = '#ffffff';
-  ctx.beginPath(); ctx.arc(-3.6, 13, 2.5, 0, Math.PI * 2); ctx.fill(); ink(1);
-  ctx.beginPath(); ctx.arc(3.6, 13, 2.5, 0, Math.PI * 2); ctx.fill(); ink(1);
-  ctx.fillStyle = '#2a1a10';
-  ctx.beginPath(); ctx.arc(-3, 13.3, 1.1, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(4, 13.3, 1.1, 0, Math.PI * 2); ctx.fill();
+  // face: vertical-rectangle eyes + pupils, nose, smile
+  if (isBlinking(f)) {
+    ctx.strokeStyle = OUT; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(-5.1, 13); ctx.lineTo(-2.1, 13);
+    ctx.moveTo(2.1, 13); ctx.lineTo(5.1, 13); ctx.stroke();
+  } else {
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); roundRect(-5.1, 10, 3, 6, 1); ctx.fill(); ink(1);
+    ctx.beginPath(); roundRect(2.1, 10, 3, 6, 1); ctx.fill(); ink(1);
+    ctx.fillStyle = '#2a1a10';
+    ctx.fillRect(-4.1, 12.2, 2, 2.4);
+    ctx.fillRect(2.9, 12.2, 2, 2.4);
+    // hint of an eyelid across the top — softens the wide-eyed stare
+    ctx.fillStyle = skin;
+    roundRect(-5.3, 9.4, 3.4, 2.6, 1); ctx.fill();
+    roundRect(1.9, 9.4, 3.4, 2.6, 1); ctx.fill();
+  }
+  // slightly angry brows — angled down toward the centre
+  ctx.strokeStyle = hair; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-5.4, 8.8); ctx.lineTo(-2, 9.9);
+  ctx.moveTo(5.4, 8.8); ctx.lineTo(2, 9.9);
+  ctx.stroke();
   ctx.fillStyle = skinSh;                                   // nose
   ctx.beginPath(); ctx.arc(0.4, 15.5, 1.7, 0, Math.PI * 2); ctx.fill(); ink(1);
   ctx.strokeStyle = OUT; ctx.lineWidth = 1.5;               // smile
@@ -311,9 +350,30 @@ function drawCrewmate(f) {
   ctx.fillStyle = shade;
   roundRect(-halfW, bodyTop, 6, bodyBot - bodyTop, 6); ctx.fill();
 
-  // visor / lens (no glint dot)
-  ctx.fillStyle = f.visorColor;
-  roundRect(-2, 9, 14, 9, 4); ctx.fill();
+  // two vertical-rectangle eyes (replaces the Among-Us visor)
+  if (isBlinking(f)) {
+    // closed: a short dark lid line where the eyes were
+    ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 1.4; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(0, 13); ctx.lineTo(3.4, 13);
+    ctx.moveTo(6, 13); ctx.lineTo(9.4, 13); ctx.stroke();
+  } else {
+    ctx.fillStyle = '#ffffff';
+    roundRect(0, 8, 3.4, 9, 1.4); ctx.fill();
+    roundRect(6, 8, 3.4, 9, 1.4); ctx.fill();
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0.7, 11, 2, 4);
+    ctx.fillRect(6.7, 11, 2, 4);
+    // hint of an eyelid across the top — softens the wide-eyed stare
+    ctx.fillStyle = body;
+    roundRect(-0.2, 7.5, 3.8, 3, 1.4); ctx.fill();
+    roundRect(5.8, 7.5, 3.8, 3, 1.4); ctx.fill();
+  }
+  // slightly angry brows (a touch mad) — angled down toward the centre
+  ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 1.3; ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(0, 6.6); ctx.lineTo(3.4, 8);
+  ctx.moveTo(9.4, 6.6); ctx.lineTo(6, 8);
+  ctx.stroke();
 
   // chest / head emblem depends on the attack style
   if (f.attack === 'triangle') {
@@ -701,6 +761,7 @@ function draw() {
   }
 }
 let _barShown = false;
+let _badgeFighter = null;
 
 // Small badge showing the player's chosen character (top-left of later menus).
 function drawChosenBadge() {
@@ -711,7 +772,10 @@ function drawChosenBadge() {
   ctx.lineWidth = 2;
   roundRect(12, 12, 172, 58, 10); ctx.stroke();
 
-  drawCrewmate(makeFighter(20, 16, 1, playerCharKey, PLAYER_COMBAT));
+  if (!_badgeFighter || _badgeFighter.charKey !== playerCharKey) {
+    _badgeFighter = makeFighter(20, 16, 1, playerCharKey, PLAYER_COMBAT);
+  }
+  drawCrewmate(_badgeFighter);
 
   ctx.textAlign = 'left';
   ctx.fillStyle = '#9aa0aa';
