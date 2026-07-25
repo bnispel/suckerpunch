@@ -1,56 +1,57 @@
-# SuckerPunch
+# Lincoln's Arcade
 
-A tiny 2D crewmate battle game. Pick a character, fight a computer opponent on
-floating rocks over a sea of lava, and knock their HP to zero (or bump them into
-the lava).
+A small collection of browser games that share a common engine. Everything is
+plain classic scripts sharing one global scope (no modules, no build step), so
+each game runs straight from the file system.
 
-## Play
+Open the root `index.html` for a menu, or open a game's own `index.html`
+directly.
 
-Open `index.html` in any modern browser — no build step or server needed.
+## Games
 
-### Controls
+- **[SuckerPunch](suckerpunch/)** — a 2D crewmate battle game. Pick a character,
+  fight a computer opponent on floating rocks over a sea of lava, and knock their
+  HP to zero (or bump them into the lava). See [suckerpunch/](suckerpunch/).
+- **[Ultimate Character Basketball](ultimatecharacterbasketball/)** — in progress.
+  Currently a starter scene (court, hoop, dribbling ball, a blinking character)
+  built on the shared engine.
+
+## Shared engine
+
+Reusable, game-agnostic code lives in `engine/`, loaded before each game's own
+scripts:
+
+```
+engine/
+  canvas.js    # rectsOverlap, hitBox, roundRect, shadeColor, drawFlame
+  effects.js   # isBlinking + randomBlinkPhase (the eye-blink effect)
+  loop.js      # startGameLoop() — the requestAnimationFrame runner
+```
+
+The engine assumes each game defines the globals it needs — a `ctx` (2D canvas
+context) and a `frame` clock — then calls `startGameLoop()` once its `update()`
+and `draw()` functions exist.
+
+## Project layout
+
+```
+index.html                    # menu linking to each game
+engine/                       # shared, game-agnostic code (see above)
+suckerpunch/
+  index.html                  # loads ../engine + its own scripts
+  css/style.css
+  js/                         # config, world, characters, physics, combat, ai, render, ...
+  reference/                  # design sketches / screenshots (the kid's drawings)
+ultimatecharacterbasketball/
+  index.html
+  css/style.css
+  js/game.js                  # starter scene
+```
+
+## SuckerPunch controls
+
 - **← / →** — move
 - **Space** (or ↑) — jump
 - **F** — attack
 - **R** — back to the menu
 - Menus: click an option, or press the matching number key
-
-## Characters
-
-| Character | Look | Attack |
-|-----------|------|--------|
-| **Blue** | gray body, blue lens & tongue | melee tongue lash |
-| **Nameless one** | green body | shoots spinning triangles from afar |
-| **Ember** | black body, fire on the head | lobs fireballs |
-| **Corupted Cape** | purple body, witch hat & red cape | throws potions that leave a damaging splash; glides (falls slowly) thanks to the cape |
-
-You choose your character; the computer randomly becomes one of the others. Pick a
-difficulty (Easy / Medium / Hard) that scales the computer's speed and power.
-
-## The arena
-
-- Floating triangle rocks, each with its own randomly generated red cracks.
-- A sea of lava below: standing in it burns you (10 damage on contact, then every
-  ~3 seconds). Die in the lava and you sink under; die on a rock and you topple over.
-
-## Project layout
-
-```
-index.html        # loads the stylesheet and scripts in order
-css/style.css     # page + canvas styling
-js/
-  config.js       # canvas handles, constants, shared helpers
-  world.js        # platforms and their procedural cracks
-  characters.js   # character definitions, fighter factory, combat stats
-  state.js        # match state, menus, starting a game
-  input.js        # keyboard + mouse handling
-  physics.js      # movement, collisions, lava, timers
-  combat.js       # tongue lash, projectiles, potions
-  ai.js           # player controls + computer opponent
-  game.js         # per-frame update step and death sequence
-  render.js       # all drawing
-  main.js         # the requestAnimationFrame loop
-```
-
-The scripts are plain classic scripts sharing one global scope (no modules), so the
-game runs straight from the file system without a local server.

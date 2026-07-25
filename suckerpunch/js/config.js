@@ -50,10 +50,9 @@ function platformDepth(p) {
   return Math.min(p.w * 0.5, 46);
 }
 
-// ---- shared helpers ----
-function rectsOverlap(a, b) {
-  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
-}
+// ---- game-specific helpers ----
+// Generic helpers (rectsOverlap, hitBox, roundRect, shadeColor, drawFlame)
+// now live in ../../engine/ and are loaded before this file.
 
 // Is there a platform to stand on at x, near foot height footY?
 function groundUnder(x, footY) {
@@ -61,40 +60,4 @@ function groundUnder(x, footY) {
     if (x >= p.x && x <= p.x + p.w && p.y >= footY - 8 && p.y <= footY + 60) return p;
   }
   return null;
-}
-
-function hitBox(o, mx, my) {
-  return mx >= o.x && mx <= o.x + o.w && my >= o.y && my <= o.y + o.h;
-}
-
-function roundRect(rx, ry, rw, rh, rr) {
-  const r = Math.min(rr, rw / 2, rh / 2);
-  ctx.beginPath();
-  ctx.moveTo(rx + r, ry);
-  ctx.arcTo(rx + rw, ry, rx + rw, ry + rh, r);
-  ctx.arcTo(rx + rw, ry + rh, rx, ry + rh, r);
-  ctx.arcTo(rx, ry + rh, rx, ry, r);
-  ctx.arcTo(rx, ry, rx + rw, ry, r);
-  ctx.closePath();
-}
-
-function shadeColor(hex, amt) {
-  const n = parseInt(hex.slice(1), 16);
-  let r = (n >> 16) + amt, g = ((n >> 8) & 255) + amt, b = (n & 255) + amt;
-  r = Math.max(0, Math.min(255, r));
-  g = Math.max(0, Math.min(255, g));
-  b = Math.max(0, Math.min(255, b));
-  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-}
-
-// A flame shape rising from (cx, baseY) up to height ht (used by Ember).
-function drawFlame(cx, baseY, hw, ht, flick) {
-  const tipY = baseY - ht + flick;
-  ctx.beginPath();
-  ctx.moveTo(cx, tipY);
-  ctx.quadraticCurveTo(cx + hw, baseY - ht * 0.4, cx + hw * 0.5, baseY);
-  ctx.quadraticCurveTo(cx, baseY + 2, cx - hw * 0.5, baseY);
-  ctx.quadraticCurveTo(cx - hw, baseY - ht * 0.4, cx, tipY);
-  ctx.closePath();
-  ctx.fill();
 }

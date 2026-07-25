@@ -2,44 +2,211 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SuckerPunch</title>
-<link rel="stylesheet" href="css/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lincoln's Arcade</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 28px; padding: 40px 20px;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #eef1f6;
+    /* deep space: a couple of distant nebula glows over near-black */
+    background:
+      radial-gradient(1100px 700px at 18% 12%, rgba(94, 52, 168, 0.45), transparent 60%),
+      radial-gradient(900px 600px at 85% 25%, rgba(30, 90, 168, 0.40), transparent 62%),
+      radial-gradient(1000px 800px at 60% 100%, rgba(168, 46, 120, 0.30), transparent 60%),
+      #05060b;
+    overflow: hidden;
+  }
+  /* animated starfield sits behind everything */
+  #stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; }
+  /* keep content above the stars */
+  .logo, p.sub, .grid { position: relative; z-index: 1; }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+  .logo {
+    display: block; width: clamp(210px, 42vw, 300px); height: auto;
+    filter: drop-shadow(0 0 26px rgba(245, 115, 31, 0.35))
+            drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5));
+  }
+  p.sub { margin: 0; color: #aeb6ce; text-shadow: 0 0 10px rgba(0,0,0,0.6); }
+  .grid {
+    display: grid; gap: 18px; width: 100%; max-width: 640px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  a.card {
+    display: block; border-radius: 16px; overflow: hidden;
+    text-decoration: none; color: inherit;
+    background: rgba(22, 27, 46, 0.55);
+    border: 1px solid rgba(120, 140, 220, 0.28);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), inset 0 0 30px rgba(80, 110, 220, 0.06);
+    transition: transform .14s ease, border-color .14s ease, box-shadow .14s ease;
+  }
+  a.card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(150, 180, 255, 0.7);
+    box-shadow: 0 12px 40px rgba(0,0,0,.5), 0 0 24px rgba(110, 150, 255, 0.35);
+  }
+  a.card .thumb {
+    display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover;
+    background: #05060b; border-bottom: 1px solid rgba(120, 140, 220, 0.22);
+  }
+  a.card .body { padding: 18px 20px 22px; }
+  a.card .title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  a.card .desc { color: #aeb6ce; font-size: 14px; }
+  a.card.soon { opacity: .6; pointer-events: none; }
+  a.card.soon .desc::after { content: '  •  coming soon'; color: #d8a24a; }
+</style>
 </head>
 <body>
-  <h1>SuckerPunch</h1>
-  <canvas id="game" width="800" height="540"></canvas>
-  <div id="hint">← → move &nbsp;•&nbsp; Space jump &nbsp;•&nbsp; F / ↓ attack &nbsp;•&nbsp; R menu</div>
+  <canvas id="stars"></canvas>
 
-  <!-- Portrait touch controls: a button bar shown below the game on touch
-       devices held upright (landscape uses the on-canvas overlay buttons). -->
-  <div id="touch-bar">
-    <div class="pad">
-      <button class="tbtn" data-act="left">◀</button>
-      <button class="tbtn" data-act="right">▶</button>
-    </div>
-    <div class="pad">
-      <button class="tbtn hit" data-act="attack">HIT</button>
-      <button class="tbtn jump" data-act="jump">JUMP</button>
-    </div>
+  <h1 class="sr-only">Lincoln's Arcade</h1>
+
+  <!-- Logo drawn by Lincoln: an arcade cabinet badge — zigzag screen, orange
+       side panels reading LINCOLN'S / ARCADE, red caps and base. -->
+  <svg class="logo" viewBox="0 0 400 400" role="img" aria-label="Lincoln's Arcade">
+    <defs>
+      <clipPath id="cab"><rect x="126" y="76" width="148" height="248" rx="16"/></clipPath>
+    </defs>
+    <circle cx="200" cy="200" r="182" fill="rgba(8,10,22,0.35)" stroke="#0c0e17" stroke-width="4"/>
+    <g clip-path="url(#cab)">
+      <rect x="126" y="76" width="148" height="248" fill="#ffffff"/>
+      <rect x="126" y="76"  width="148" height="32" fill="#e5342a"/>
+      <rect x="126" y="108" width="148" height="48" fill="#f5731f"/>
+      <rect x="126" y="244" width="148" height="48" fill="#f5731f"/>
+      <rect x="126" y="292" width="148" height="32" fill="#e5342a"/>
+      <!-- zigzag "screen" -->
+      <polyline points="150,170 250,186 150,202 250,218 150,234"
+                fill="none" stroke="#111" stroke-width="4.5"
+                stroke-linejoin="round" stroke-linecap="round"/>
+      <!-- decorative dots on the panels -->
+      <circle cx="140" cy="131" r="3.2" fill="#141414"/>
+      <circle cx="260" cy="131" r="3.2" fill="#141414"/>
+      <circle cx="140" cy="269" r="3.2" fill="#141414"/>
+      <circle cx="260" cy="269" r="3.2" fill="#141414"/>
+    </g>
+    <!-- panel separators + cabinet outline -->
+    <g stroke="#0c0e17" fill="none" stroke-width="3">
+      <line x1="126" y1="108" x2="274" y2="108"/>
+      <line x1="126" y1="156" x2="274" y2="156"/>
+      <line x1="126" y1="244" x2="274" y2="244"/>
+      <line x1="126" y1="292" x2="274" y2="292"/>
+    </g>
+    <rect x="126" y="76" width="148" height="248" rx="16" fill="none" stroke="#0c0e17" stroke-width="4"/>
+    <!-- panel text, upright -->
+    <text x="200" y="141" text-anchor="middle"
+          font-family="'Arial Black', Impact, sans-serif" font-weight="900"
+          font-size="23" fill="#141414" letter-spacing="0.5">LINCOLN'S</text>
+    <text x="200" y="278" text-anchor="middle"
+          font-family="'Arial Black', Impact, sans-serif" font-weight="900"
+          font-size="25" fill="#141414" letter-spacing="1.5">ARCADE</text>
+  </svg>
+
+  <p class="sub">Pick a game to play</p>
+  <div class="grid">
+    <a class="card" href="suckerpunch/">
+      <img class="thumb" src="suckerpunch/thumb.png" alt="SuckerPunch gameplay screenshot">
+      <div class="body">
+        <div class="title">SuckerPunch</div>
+        <div class="desc">Platform fighter — try to defeat your opponent.</div>
+      </div>
+    </a>
+    <a class="card" href="ultimatecharacterbasketball/">
+      <img class="thumb" src="ultimatecharacterbasketball/thumb.png" alt="Ultimate Character Basketball screenshot">
+      <div class="body">
+        <div class="title">Ultimate Character Basketball</div>
+        <div class="desc">The characters, now on the court.</div>
+      </div>
+    </a>
   </div>
 
-  <!-- Vercel Web Analytics (static-site integration; enable it in the Vercel
-       dashboard under the project's Analytics tab). -->
-  <script defer src="/_vercel/insights/script.js"></script>
+  <script>
+  // Twinkling, slowly-drifting starfield behind the menu.
+  (function () {
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+    let w, h, stars, shootTimer;
 
-  <!-- Scripts load in dependency order (classic scripts share one global scope,
-       so the game runs by just opening this file — no build step or server). -->
-  <script src="js/config.js"></script>
-  <script src="js/world.js"></script>
-  <script src="js/characters.js"></script>
-  <script src="js/state.js"></script>
-  <script src="js/input.js"></script>
-  <script src="js/physics.js"></script>
-  <script src="js/combat.js"></script>
-  <script src="js/ai.js"></script>
-  <script src="js/game.js"></script>
-  <script src="js/render.js"></script>
-  <script src="js/main.js"></script>
+    function build() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.width = Math.floor(innerWidth * dpr);
+      h = canvas.height = Math.floor(innerHeight * dpr);
+      canvas.style.width = innerWidth + 'px';
+      canvas.style.height = innerHeight + 'px';
+      // star count scales with screen area
+      const count = Math.round((innerWidth * innerHeight) / 2600);
+      stars = [];
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: (Math.random() * 1.3 + 0.3) * dpr,
+          base: Math.random() * 0.5 + 0.4,       // base brightness
+          tw: Math.random() * Math.PI * 2,        // twinkle phase
+          tws: Math.random() * 0.04 + 0.01,       // twinkle speed
+          drift: (Math.random() * 0.12 + 0.02) * dpr,  // downward drift
+          hue: Math.random() < 0.15 ? 210 : (Math.random() < 0.5 ? 45 : 0), // some blue/gold
+        });
+      }
+      shootTimer = 120 + Math.random() * 300;
+    }
+
+    let shoot = null;
+    function maybeShoot() {
+      if (shoot) return;
+      if (--shootTimer > 0) return;
+      shootTimer = 300 + Math.random() * 600;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      shoot = {
+        x: Math.random() * w * 0.6, y: Math.random() * h * 0.4,
+        vx: (4 + Math.random() * 3) * dpr, vy: (2 + Math.random() * 2) * dpr,
+        life: 0, max: 26,
+      };
+    }
+
+    function frame() {
+      ctx.clearRect(0, 0, w, h);
+      for (const s of stars) {
+        s.tw += s.tws;
+        const a = s.base + Math.sin(s.tw) * 0.35;
+        s.y += s.drift;
+        if (s.y > h + 2) { s.y = -2; s.x = Math.random() * w; }
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        if (s.hue === 0) ctx.fillStyle = 'rgba(255,255,255,' + Math.max(0, a) + ')';
+        else if (s.hue === 210) ctx.fillStyle = 'rgba(150,190,255,' + Math.max(0, a) + ')';
+        else ctx.fillStyle = 'rgba(255,225,160,' + Math.max(0, a) + ')';
+        ctx.fill();
+      }
+      // occasional shooting star
+      maybeShoot();
+      if (shoot) {
+        shoot.x += shoot.vx; shoot.y += shoot.vy; shoot.life++;
+        const t = 1 - shoot.life / shoot.max;
+        ctx.strokeStyle = 'rgba(255,255,255,' + Math.max(0, t) + ')';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(shoot.x, shoot.y);
+        ctx.lineTo(shoot.x - shoot.vx * 4, shoot.y - shoot.vy * 4);
+        ctx.stroke();
+        if (shoot.life >= shoot.max) shoot = null;
+      }
+      requestAnimationFrame(frame);
+    }
+
+    build();
+    addEventListener('resize', build);
+    frame();
+  })();
+  </script>
 </body>
 </html>

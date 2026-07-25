@@ -1,12 +1,7 @@
 // All drawing: background, lava, rocks, crewmates, projectiles, potions, UI.
 const ATTACK_LABEL = { melee: 'Tongue lash', triangle: 'Triangle shot', fireball: 'Fireball', potion: 'Potion splash', slime: 'Slime balls' };
 
-// Eyes stay open most of the time, snapping shut for a few frames each cycle.
-// ~230-frame period ≈ every 4s; per-character blinkPhase keeps them out of sync.
-function isBlinking(f) {
-  const t = ((frame + (f && f.blinkPhase || 0)) % 230);
-  return t < 6;
-}
+// isBlinking() and other reusable effects live in ../../engine/effects.js.
 
 function drawBackground() {
   // reddish lava-planet sky

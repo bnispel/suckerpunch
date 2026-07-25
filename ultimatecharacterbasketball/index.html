@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ultimate Character Basketball</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <h1>Ultimate Character Basketball</h1>
+  <canvas id="game" width="800" height="540"></canvas>
+  <div id="hint">← → move · ↑ ↓ farther / closer · Space shoot (or jump) · J jump (near your net w/ ball = dunk) · H steal when touching</div>
+
+  <!-- Shared engine (canvas/math helpers, reusable effects, RAF loop). -->
+  <script src="../engine/canvas.js"></script>
+  <script src="../engine/effects.js"></script>
+  <script src="../engine/loop.js"></script>
+  <!-- Game code. -->
+  <script src="js/game.js"></script>
+</body>
+</html>
