@@ -15,6 +15,20 @@ directly.
 - **[Ultimate Character Basketball](ultimatecharacterbasketball/)** — in progress.
   Currently a starter scene (court, hoop, dribbling ball, a blinking character)
   built on the shared engine.
+- **[King of the Hill](kingofthehill/)** — stick-man brawl on a big hill. Be the
+  one standing on top when the 1:30 clock runs out. Punch people off the top
+  (jump to dodge a punch). The higher up the hill you stand, the more points
+  you earn each second (plus 2 per knock-off and a bonus for winning). Every
+  point goes into your wallet as **Stick Bucks** (saved in the browser) and
+  also fills your level ring. Click the wallet on the start screen (or press
+  **S**) to open the **Shop**: Bob the Banana (a skin) and the Extreme Skins &
+  Weapons Pack (swords, pickaxes and hammers) are buyable now; Battle of the
+  Kings (new maps) and Night Apocalypse are coming soon. Page 2 has the
+  Starter Pack (the computer makes up 3 new weapons and 3 new skins just for
+  you), the Sus Face (worn on any character) and Voice Chat (coming soon). Every stick man
+  looks and plays the same unless you buy something in the shop.
+  The sky follows the real time of day: sunrise, daytime, sunset, and a
+  moon and stars at night (add `?hour=21` to the URL to preview a time).
 
 ## Shared engine
 
@@ -46,7 +60,27 @@ ultimatecharacterbasketball/
   index.html
   css/style.css
   js/game.js                  # starter scene
+kingofthehill/
+  index.html
+  css/style.css
+  js/game.js                  # the game (hill, fighters, AI, HUD, menus, wallet)
+  js/shop.js                  # the shop screen, items, the banana skin and the Sus Face
+  js/starter.js               # makes up the Starter Pack's random weapons and skins
+  js/loadout.js               # the pick screens before a battle (character, weapon, face)
+  js/main.js                  # starts the game loop once everything is loaded
+  reference/sketch.jpg        # Lincoln's drawing of the game
+  reference/shop-sketch.jpg   # Lincoln's drawing of the shop
 ```
+
+## King of the Hill controls
+
+- **← / →** — move
+- **↑** — jump (the only way to dodge a punch)
+- **Space** — punch
+- **M** — sound on/off
+- **S** — open the shop (from the start screen)
+- **Play** → pick your character → pick your weapon → pick your face → battle. On each pick screen: click one (or **← / →**), **Enter** for Next / Fight!, **Esc** to go back. A screen is skipped if you don't own anything to choose there yet.
+- **R** — back to the menu
 
 ## SuckerPunch controls
 
