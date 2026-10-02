@@ -32,13 +32,14 @@
     overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
   }
   .logo {
-    display: block; width: clamp(210px, 42vw, 300px); height: auto;
-    filter: drop-shadow(0 0 26px rgba(245, 115, 31, 0.35))
+    display: block; width: auto; height: clamp(220px, 38vh, 380px); max-width: 80vw;
+    object-fit: contain;
+    filter: drop-shadow(0 0 26px rgba(229, 52, 42, 0.35))
             drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5));
   }
   p.sub { margin: 0; color: #aeb6ce; text-shadow: 0 0 10px rgba(0,0,0,0.6); }
   .grid {
-    display: grid; gap: 18px; width: 100%; max-width: 640px;
+    display: grid; gap: 18px; width: 100%; max-width: 900px;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   }
   a.card {
@@ -71,45 +72,7 @@
 
   <h1 class="sr-only">Lincoln's Arcade</h1>
 
-  <!-- Logo drawn by Lincoln: an arcade cabinet badge — zigzag screen, orange
-       side panels reading LINCOLN'S / ARCADE, red caps and base. -->
-  <svg class="logo" viewBox="0 0 400 400" role="img" aria-label="Lincoln's Arcade">
-    <defs>
-      <clipPath id="cab"><rect x="126" y="76" width="148" height="248" rx="16"/></clipPath>
-    </defs>
-    <circle cx="200" cy="200" r="182" fill="rgba(8,10,22,0.35)" stroke="#0c0e17" stroke-width="4"/>
-    <g clip-path="url(#cab)">
-      <rect x="126" y="76" width="148" height="248" fill="#ffffff"/>
-      <rect x="126" y="76"  width="148" height="32" fill="#e5342a"/>
-      <rect x="126" y="108" width="148" height="48" fill="#f5731f"/>
-      <rect x="126" y="244" width="148" height="48" fill="#f5731f"/>
-      <rect x="126" y="292" width="148" height="32" fill="#e5342a"/>
-      <!-- zigzag "screen" -->
-      <polyline points="150,170 250,186 150,202 250,218 150,234"
-                fill="none" stroke="#111" stroke-width="4.5"
-                stroke-linejoin="round" stroke-linecap="round"/>
-      <!-- decorative dots on the panels -->
-      <circle cx="140" cy="131" r="3.2" fill="#141414"/>
-      <circle cx="260" cy="131" r="3.2" fill="#141414"/>
-      <circle cx="140" cy="269" r="3.2" fill="#141414"/>
-      <circle cx="260" cy="269" r="3.2" fill="#141414"/>
-    </g>
-    <!-- panel separators + cabinet outline -->
-    <g stroke="#0c0e17" fill="none" stroke-width="3">
-      <line x1="126" y1="108" x2="274" y2="108"/>
-      <line x1="126" y1="156" x2="274" y2="156"/>
-      <line x1="126" y1="244" x2="274" y2="244"/>
-      <line x1="126" y1="292" x2="274" y2="292"/>
-    </g>
-    <rect x="126" y="76" width="148" height="248" rx="16" fill="none" stroke="#0c0e17" stroke-width="4"/>
-    <!-- panel text, upright -->
-    <text x="200" y="141" text-anchor="middle"
-          font-family="'Arial Black', Impact, sans-serif" font-weight="900"
-          font-size="23" fill="#141414" letter-spacing="0.5">LINCOLN'S</text>
-    <text x="200" y="278" text-anchor="middle"
-          font-family="'Arial Black', Impact, sans-serif" font-weight="900"
-          font-size="25" fill="#141414" letter-spacing="1.5">ARCADE</text>
-  </svg>
+  <img class="logo" src="logo.png" alt="Lincoln's Arcade">
 
   <p class="sub">Pick a game to play</p>
   <div class="grid">
@@ -125,6 +88,13 @@
       <div class="body">
         <div class="title">Ultimate Character Basketball</div>
         <div class="desc">The characters, now on the court.</div>
+      </div>
+    </a>
+    <a class="card" href="kingofthehill/">
+      <img class="thumb" src="kingofthehill/thumb.png" alt="King of the Hill gameplay screenshot">
+      <div class="body">
+        <div class="title">King of the Hill</div>
+        <div class="desc">Be on top of the hill when time runs out.</div>
       </div>
     </a>
   </div>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>King of the Hill</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <h1>King of the Hill</h1>
+  <canvas id="game" width="800" height="540"></canvas>
+  <div id="hint">← → move · ↑ jump · Space punch · M sound on/off · R menu</div>
+
+  <!-- Shared engine (canvas/math helpers, reusable effects, RAF loop). -->
+  <script src="../engine/canvas.js"></script>
+  <script src="../engine/effects.js"></script>
+  <script src="../engine/loop.js"></script>
+  <!-- Game code. -->
+  <script src="js/game.js"></script>
+  <script src="js/shop.js"></script>
+  <script src="js/starter.js"></script>
+  <script src="js/loadout.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
